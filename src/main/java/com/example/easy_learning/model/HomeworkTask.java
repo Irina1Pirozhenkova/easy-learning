@@ -1,9 +1,11 @@
 package com.example.easy_learning.model;
 
 import jakarta.persistence.*;
+import lombok.Data;
 
 @Entity
 @Table(name = "homework_task")
+@Data
 public class HomeworkTask {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
