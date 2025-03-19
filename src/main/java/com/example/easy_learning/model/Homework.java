@@ -3,6 +3,8 @@ package com.example.easy_learning.model;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.util.Set;
+
 @Entity
 @Table(name = "homework")
 @Data
@@ -27,4 +29,7 @@ public class Homework {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "tutor_id")
     private Tutor tutor;
+
+    @OneToMany(mappedBy = "homework", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<HomeworkTask> tasks;
 }
