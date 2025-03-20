@@ -1,0 +1,31 @@
+services:
+  app:
+    build: .
+    image: easy_learning_app
+    container_name: easy_learning_app
+    ports:
+      - "8080:8080"
+      #    environment:
+      # Переопределяем настройки подключения к базе, чтобы использовать имя сервиса MySQL
+      #      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:2020/easy_learning
+      #      - SPRING_DATASOURCE_USERNAME=root
+      #      - SPRING_DATASOURCE_PASSWORD=12345
+      # Если используются дополнительные настройки Liquibase, можно их тоже передать через переменные окружения
+    depends_on:
+      - mysql
+
+  mysql:
+    image: mysql:8.0
+    container_name: mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: 12345
+      MYSQL_DATABASE: easy_learning
+    ports:
+      - "2020:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+
+volumes:
+  mysql_data:

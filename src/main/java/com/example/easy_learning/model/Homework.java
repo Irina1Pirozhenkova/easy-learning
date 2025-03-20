@@ -31,5 +31,8 @@ public class Homework {
     private Tutor tutor;
 
     @OneToMany(mappedBy = "homework", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<StudentsHomework> students;
+
+    @OneToMany(mappedBy = "homework", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<HomeworkTask> tasks;
 }

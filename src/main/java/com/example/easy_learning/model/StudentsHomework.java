@@ -18,4 +18,20 @@ public class StudentsHomework {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "homework_id")
     private Homework homework;
+
+    private Boolean isDone;
+
+    private Boolean isChecked;
+
+    private Integer score;
+
+    public void setStudent(Student student) {
+        this.student = student;
+        if (student != null) student.getHomeworks().add(this);
+    }
+
+    public void setHomework(Homework homework) {
+        this.homework = homework;
+        if (homework != null) homework.getStudents().add(this);
+    }
 }

@@ -6,6 +6,7 @@ import lombok.Data;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "student")
@@ -22,8 +23,8 @@ public class Student {
     private String password;
 
     @OneToMany(mappedBy = "student", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<StudentsHomework> homeworks;
+    private Set<StudentsHomework> homeworks;
 
     @OneToMany(mappedBy = "student", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<StudentsTutors> tutors;
+    private Set<StudentsTutors> tutors;
 }

@@ -18,4 +18,14 @@ public class HomeworkTask {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "task_id")
     private Task task;
+
+    public void setTask(Task task) {
+        this.task = task;
+        if (task != null) task.getHomeworks().add(this);
+    }
+
+    public void setHomework(Homework homework) {
+        this.homework = homework;
+        if (homework != null) homework.getTasks().add(this);
+    }
 }

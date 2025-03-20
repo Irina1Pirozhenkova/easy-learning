@@ -3,6 +3,9 @@ package com.example.easy_learning.model;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.util.HashSet;
+import java.util.Set;
+
 @Entity
 @Table(name = "task")
 @Data
@@ -11,8 +14,8 @@ public class Task {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(name = "photo", nullable = false)
-    private String photoUrl; // LONGBLOB маппится на byte[]
+    @Column(name = "photo_url", nullable = false)
+    private String photoUrl;
 
     @Column(name = "class", nullable = false)
     private String className; // Используем "className" вместо "class"
@@ -29,4 +32,7 @@ public class Task {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "tutor_id")
     private Tutor tutor;
+
+    @OneToMany(mappedBy = "task", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<HomeworkTask> homeworks = new HashSet<>();
 }
