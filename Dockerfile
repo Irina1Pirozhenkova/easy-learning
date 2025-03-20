@@ -13,5 +13,12 @@ FROM openjdk:17-jdk-slim
 WORKDIR /app
 # Копируем скомпилированный jar из стадии сборки
 COPY --from=builder /app/target/easy_learning-0.0.1-SNAPSHOT.jar app.jar
+
+# Загружаем скрипт wait-for-it и делаем его исполняемым
+ADD https://raw.githubusercontent.com/vishnubob/wait-for-it/master/wait-for-it.sh /wait-for-it.sh
+RUN chmod +x /wait-for-it.sh
+
 EXPOSE 8080
-ENTRYPOINT ["java", "-jar", "app.jar"]
+# Ожидаем, пока база MySQL станет доступной, затем запускаем приложение
+ENTRYPOINT ["/wait-for-it.sh", "mysql:3306", "--", "java", "-jar", "app.jar"]
+
