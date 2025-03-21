@@ -13,3 +13,7 @@ spring:
   liquibase:
     change-log: classpath:db/changelog/db.changelog-master.xml
     enabled: true
+  security:
+    user:
+      name: admin
+      password: $2a$12$HXd78PaHX.RUjzLhRTaLquTW2HzskPCm7Doq3RUXBsiQ0wCgT3iZW
