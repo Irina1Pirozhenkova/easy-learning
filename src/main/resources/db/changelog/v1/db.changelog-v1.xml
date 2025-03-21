@@ -12,4 +12,5 @@
     <include file="student.xml" relativeToChangelogFile="true"/>
     <include file="student_homework.xml" relativeToChangelogFile="true"/>
     <include file="student_tutors.xml" relativeToChangelogFile="true"/>
+    <include file="test-data.xml" relativeToChangelogFile="true"/>
 </databaseChangeLog>
