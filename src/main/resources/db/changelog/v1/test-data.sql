@@ -1,12 +1,12 @@
 -- Вставка репетиторов
 INSERT INTO tutor (password, firstname, lastname, birthdate, email, phone, telegram)
-VALUES ('tutor1pass', 'Alice', 'Anderson', '1975-06-15', 'alice.anderson@example.com', '1111111111', 'alice_a'),
-       ('tutor2pass', 'Bob', 'Brown', '1980-09-20', 'bob.brown@example.com', '2222222222', 'bob_b');
+VALUES ('$2a$12$lvTdIVYSAlvhM2PbMKJJGOCXl.MuhtUNl3kUZAbI8FKsb/8ei1BIa', 'Alice', 'Anderson', '1975-06-15', 'alice.anderson@example.com', '1111111111', 'alice_a'),
+       ('$2a$12$2StXDXvy7wq4XoIudYxlpue626sqFAaGzcyOfVQ6wbQq3CE5P/QCW', 'Bob', 'Brown', '1980-09-20', 'bob.brown@example.com', '2222222222', 'bob_b');
 
 -- Вставка учеников
 INSERT INTO student (password, firstname, lastname, birthdate, class, subject, email, phone, telegram)
-VALUES ('student1pass', 'Charlie', 'Clark', '2005-03-10', '10A', 'Math', 'charlie@example.com', '3333333333', 'charlie_c'),
-       ('student2pass', 'Diana', 'Davis', '2006-07-22', '10B', 'Physics', 'diana@example.com', '4444444444', 'diana_d');
+VALUES ('$2a$12$DMWwMhm25MTKlT1ZPR4DTutLEfxsrQ1gdnaQadAWYbRzf7xrKIM02', 'Charlie', 'Clark', '2005-03-10', '10A', 'Math', 'charlie@example.com', '3333333333', 'charlie_c'),
+       ('$2a$12$5PpIabi.CLFHrxxzC5vRtuOfHw4FbbqtwlCJzXFzDLh0h9ji66yj6', 'Diana', 'Davis', '2006-07-22', '10B', 'Physics', 'diana@example.com', '4444444444', 'diana_d');
 
 -- Вставка домашних заданий
 INSERT INTO homework (class, subject, topic, difficulty, tutor_id)
