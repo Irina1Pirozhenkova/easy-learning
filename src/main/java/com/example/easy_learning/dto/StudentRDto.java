@@ -10,9 +10,11 @@ public class StudentRDto {
 
   private Integer id;
 
+  private String password;
+
   private StudentPersonalInfoDto studentPersonalInfo;
 
   private Set<StudentsHomeworkHDto> homeworks;
 
-  private Set<TutorNRDto> tutors;
+  private Set<StudentsTutorsTDto> tutors;
 }

@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -26,11 +27,11 @@ public class Tutor {
     private String password;
 
     @OneToMany(mappedBy = "tutor", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<Task> tasks;
+    private Set<Task> tasks = new HashSet<>();
 
     @OneToMany(mappedBy = "tutor", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<Homework> homeworks;
+    private Set<Homework> homeworks = new HashSet<>();
 
     @OneToMany(mappedBy = "tutor", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<StudentsTutors> students;
+    private Set<StudentsTutors> students = new HashSet<>();
 }

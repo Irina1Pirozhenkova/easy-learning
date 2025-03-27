@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.*;
 
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -34,8 +35,18 @@ public class Homework {
     private Tutor tutor;
 
     @OneToMany(mappedBy = "homework", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<StudentsHomework> students;
+    private Set<StudentsHomework> students = new HashSet<>();
 
     @OneToMany(mappedBy = "homework", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<HomeworkTask> tasks;
+    private Set<HomeworkTask> tasks = new HashSet<>();
+
+    public void setTasks(Set<HomeworkTask> tasks) {
+        this.tasks.clear();
+        tasks.forEach(task -> task.setHomework(this));
+    }
+
+    public void setStudents(Set<StudentsHomework> students) {
+        this.students.clear();
+        students.forEach(student -> student.setHomework(this));
+    }
 }

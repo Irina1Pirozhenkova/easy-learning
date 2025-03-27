@@ -1,6 +1,7 @@
 package com.example.easy_learning.service;
 
 import com.example.easy_learning.model.Homework;
+import com.example.easy_learning.model.HomeworkTask;
 import com.example.easy_learning.model.Student;
 import com.example.easy_learning.model.StudentsHomework;
 import com.example.easy_learning.repository.HomeworkRepository;
@@ -10,8 +11,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -37,12 +41,39 @@ public class StudentService {
   }
 
   public Student updateStudent(Integer id, Student updatedStudent) {
-    Student existingStudent = getStudentById(id);
+    Student existingStudent = getStudentByIdWithAllRelations(id);
+    if (updatedStudent.getHomeworks() != null) {
+      Set<Integer> oldHomeworks = updatedStudent.getHomeworks()
+              .stream().filter(h -> h.getId() != null)
+              .map(StudentsHomework::getId).collect(Collectors.toSet());
+
+      existingStudent.getHomeworks()
+              .stream().filter(h -> !oldHomeworks.contains(h.getId()))
+              .forEach(h -> h.setStudent(null));
+
+      Set<StudentsHomework> test = existingStudent.getHomeworks()
+              .stream().filter(h -> oldHomeworks.contains(h.getId()))
+              .collect(Collectors.toSet());
+      existingStudent.setHomeworks(test);
+
+      Set<StudentsHomework> newHomeworks = updatedStudent.getHomeworks()
+              .stream().filter(h -> h.getId() == null)
+              .map(h -> {
+                h.setStudent(existingStudent);
+                return h;
+              }).collect(Collectors.toSet());
+    }
+
+    if (updatedStudent.getTutors() != null) {
+      existingStudent.setTutors(updatedStudent.getTutors());
+    }
 
     if (!existingStudent.getPassword().equals(updatedStudent.getPassword())) {
       existingStudent.setPassword(passwordEncoder.encode(updatedStudent.getPassword()));
     }
-    existingStudent.setStudentPersonalInfo(updatedStudent.getStudentPersonalInfo());
+    if (updatedStudent.getStudentPersonalInfo() != null) {
+      existingStudent.setStudentPersonalInfo(updatedStudent.getStudentPersonalInfo());
+    }
     return studentRepository.save(existingStudent);
   }
 

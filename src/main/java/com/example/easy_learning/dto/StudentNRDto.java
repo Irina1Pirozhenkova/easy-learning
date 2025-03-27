@@ -7,7 +7,8 @@ public class StudentNRDto {
 
   private Integer id;
 
-  private StudentPersonalInfoDto studentPersonalInfo;
-
   private String password;
+
+  private StudentPersonalInfoDto studentPersonalInfo;
 }
+

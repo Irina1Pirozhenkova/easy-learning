@@ -15,4 +15,7 @@ public interface HomeworkTaskMapper {
 
   Set<HomeworkTaskHDto> toHDtos(Set<HomeworkTask> homeworkTasks);
   Set<HomeworkTaskTDto> toTDtos(Set<HomeworkTask> homeworkTasks);
+
+  Set<HomeworkTask> toEntitiesFromHDtos(Set<HomeworkTaskHDto> homeworkTaskHDtos);
+  Set<HomeworkTask> toEntitiesFromTDtos(Set<HomeworkTaskTDto> homeworkTaskTDtos);
 }

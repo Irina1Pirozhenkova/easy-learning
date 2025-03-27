@@ -24,11 +24,11 @@ public class HomeworkTask {
 
     public void setTask(Task task) {
         this.task = task;
-        if (task != null) task.getHomeworks().add(this);
+        if (task != null && task.getHomeworks() != null) task.getHomeworks().add(this);
     }
 
     public void setHomework(Homework homework) {
         this.homework = homework;
-        if (homework != null) homework.getTasks().add(this);
+        if (homework != null && homework.getTasks() != null) homework.getTasks().add(this);
     }
 }

@@ -1,5 +1,8 @@
 package com.example.easy_learning.controller;
 
+import com.example.easy_learning.dto.HomeworkNRDto;
+import com.example.easy_learning.dto.HomeworkRDto;
+import com.example.easy_learning.mapper.*;
 import com.example.easy_learning.model.Homework;
 import com.example.easy_learning.service.HomeworkService;
 import lombok.RequiredArgsConstructor;
@@ -15,20 +18,37 @@ import java.util.Set;
 public class HomeworkController {
 
   private final HomeworkService homeworkService;
+  private final HomeworkMapper homeworkMapper;
+  private final TutorMapper tutorMapper;
+  private final HomeworkTaskMapper homeworkTaskMapper;
+  private final StudentsHomeworkMapper studentsHomeworkMapper;
 
   @PostMapping
-  public ResponseEntity<Homework> createHomework(@RequestBody Homework homework) {
-    Homework created = homeworkService.createHomework(homework);
+  public ResponseEntity<Homework> createHomework(@RequestBody HomeworkRDto homeworkRDto) {
+    Homework toCreate = homeworkMapper.toNREntity(homeworkMapper.toNRDto(homeworkRDto));
+    toCreate.setTutor(tutorMapper.toNREntity(homeworkRDto.getTutor()));
+    toCreate.setTasks(homeworkTaskMapper.toEntitiesFromTDtos(homeworkRDto.getTasks()));
+    toCreate.setStudents(studentsHomeworkMapper.toEntitiesFromSDto(homeworkRDto.getStudents()));
+
+    Homework created = homeworkService.createHomework(toCreate);
     return ResponseEntity.ok(created);
   }
 
   @GetMapping("/{id}")
-  public ResponseEntity<Homework> getHomework(@PathVariable Integer id,
+  public ResponseEntity<?> getHomework(@PathVariable Integer id,
                                               @RequestParam(value = "full", defaultValue = "false") boolean full) {
-    Homework homework = full
-            ? homeworkService.getHomeworkWithAssociationsById(id)
-            : homeworkService.getHomeworkById(id);
-    return ResponseEntity.ok(homework);
+    if (full) {
+      Homework homework = homeworkService.getHomeworkWithAssociationsById(id);
+      HomeworkRDto toResponse = homeworkMapper.toRDto(homeworkMapper.toNRDto(homework));
+      toResponse.setTasks(homeworkTaskMapper.toTDtos(homework.getTasks()));
+      toResponse.setStudents(studentsHomeworkMapper.toSDtoSet(homework.getStudents()));
+      toResponse.setTutor(tutorMapper.toNRDto(homework.getTutor()));
+      return ResponseEntity.ok(toResponse);
+    }
+    else {
+      HomeworkNRDto toResponse = homeworkMapper.toNRDto(homeworkService.getHomeworkById(id));
+      return ResponseEntity.ok(toResponse);
+    }
   }
 
   @GetMapping

@@ -6,5 +6,5 @@ import lombok.Data;
 public class HomeworkTaskTDto {
 
   private final Integer id;
-  private final TaskNRDto taskNrDto;
+  private final TaskNRDto task;
 }

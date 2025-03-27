@@ -30,11 +30,11 @@ public class StudentsHomework {
 
     public void setStudent(Student student) {
         this.student = student;
-        if (student != null) student.getHomeworks().add(this);
+        if (student != null && student.getHomeworks() != null) student.getHomeworks().add(this);
     }
 
     public void setHomework(Homework homework) {
         this.homework = homework;
-        if (homework != null) homework.getStudents().add(this);
+        if (homework != null && homework.getStudents() != null) homework.getStudents().add(this);
     }
 }

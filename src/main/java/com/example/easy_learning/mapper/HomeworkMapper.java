@@ -14,7 +14,9 @@ public interface HomeworkMapper {
   Homework toNREntity(HomeworkNRDto homeworkNRDto);
 
   HomeworkNRDto toNRDto(Homework homework);
+
   HomeworkRDto toRDto(HomeworkNRDto homeworkNRDto);
+  HomeworkNRDto toNRDto(HomeworkRDto homeworkRDto);
 
   Set<Homework> toNREntities(Set<HomeworkNRDto> homeworkNRDtos);
 
