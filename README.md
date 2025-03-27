@@ -66,16 +66,16 @@ tutor → homework, tutor → task.
 - Реализован функционал для работы с данными в соответствии с тематикой приложения (сервисы, контроллеры, репозитории)
 
 ##### Разработка ORM-моделей
-Для взаимодействия с базой данных были разработаны ORM-модели с помощью Hibernate.
-Определены основные сущности:
-Homework, Task, Student, Tutor, а также сущности-связки HomeworkTask, StudentsHomework, StudentsTutors.
-Между сущностями настроены связи @OneToMany, @ManyToOne, @ManyToMany, обеспечивающие корректное отображение отношений.
+- Для взаимодействия с базой данных были разработаны ORM-модели с помощью Hibernate.
+- Определены основные сущности: Homework, Task, Student, Tutor, а также сущности-связки HomeworkTask, StudentsHomework, StudentsTutors.
+- Между сущностями настроены связи @OneToMany, @ManyToOne, @ManyToMany, обеспечивающие корректное отображение отношений.
 
-##### Для безопасности реализовано хеширование паролей с помощью bcrypt – популярного алгоритма, обеспечивающего защиту от атак на пароли.
-##### Проект создан с помощью Spring Initializr, на базе Spring Boot.
-##### Для управления структурой базы данных используется Liquibase – инструмент для миграций.
+##### Было реализовано:
+- Для безопасности реализовано хеширование паролей с помощью bcrypt – популярного алгоритма, обеспечивающего защиту от атак на пароли.
+- Проект создан с помощью Spring Initializr, на базе Spring Boot.
+- Для управления структурой базы данных используется Liquibase – инструмент для миграций.
 
-##### Также были разработаны:
+##### Были разработаны:
 - Контроллеры: HomeworkController, StudentController, TaskController, TutorController
 - Сервисы: HomeworkService, StudentService, TaskService, TutorService
 - JPA-репозитории: HomeworkRepository, StudentRepository, TaskRepository, TutorRepository
@@ -87,6 +87,32 @@ Homework, Task, Student, Tutor, а также сущности-связки Home
 
 ##### Структура API
 
+##### Homework:
+**POST /api/homeworks** Создание домашнего задания.  
+Request body: JSON с информацией о задании.  
+Response: 200 OK (Homework), 400 Bad Request  
+
+**GET /api/homeworks/{id}** Получить домашку по ID (опционально с задачами и студентами).  
+Query param: `?full=true`  
+Response: 200 OK, 404 Not Found  
+
+**GET /api/homeworks** Получить список всех домашних заданий.  
+Response: 200 OK  
+
+**PUT /api/homeworks/{id}** Обновить домашнее задание.  
+Request body: JSON  
+Response: 200 OK, 400 Bad Request, 404 Not Found  
+
+**DELETE /api/homeworks/{id}** Удалить домашнее задание.  
+Response: 204 No Content, 404 Not Found  
+
+**POST /api/homeworks/{id}/tasks** Добавить задачи к домашнему заданию.  
+Request body: список ID задач  
+Response: 200 OK, 400 Bad Request  
+
+**DELETE /api/homeworks/{id}/tasks** Удалить задачи из домашки.  
+Request body: список ID задач  
+Response: 200 OK, 404 Not Found
 
 
 
