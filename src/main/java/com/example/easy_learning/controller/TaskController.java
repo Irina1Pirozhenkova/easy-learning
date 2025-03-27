@@ -34,6 +34,7 @@ public class TaskController {
   @PostMapping(consumes = "application/json")
   public ResponseEntity<Task> createTask(@RequestBody TaskNRDto taskNRDto) {
     Task toCreate = taskMapper.toNREntity(taskNRDto);
+    toCreate.setTutor(null);
     Task created = taskService.createTask(toCreate);
     return ResponseEntity.ok(created);
   }
@@ -47,6 +48,7 @@ public class TaskController {
   public ResponseEntity<Task> createTaskWithFile(@RequestPart("task") TaskNRDto taskNRDto,
                                                  @RequestPart("file") MultipartFile file) throws IOException {
     Task toCreate = taskMapper.toNREntity(taskNRDto);
+    toCreate.setTutor(null);
     Task created = taskService.createTaskWithFile(toCreate, file);
     return ResponseEntity.ok(created);
   }
