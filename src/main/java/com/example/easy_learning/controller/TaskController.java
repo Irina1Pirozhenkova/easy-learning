@@ -1,5 +1,11 @@
 package com.example.easy_learning.controller;
 
+import com.example.easy_learning.dto.TaskNRDto;
+import com.example.easy_learning.dto.TaskRDto;
+import com.example.easy_learning.dto.TutorNRDto;
+import com.example.easy_learning.mapper.HomeworkTaskMapper;
+import com.example.easy_learning.mapper.TaskMapper;
+import com.example.easy_learning.mapper.TutorMapper;
 import com.example.easy_learning.model.Task;
 import com.example.easy_learning.service.TaskService;
 import lombok.RequiredArgsConstructor;
@@ -9,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -17,13 +24,17 @@ import java.util.List;
 public class TaskController {
 
   private final TaskService taskService;
+  private final TaskMapper taskMapper;
+  private final TutorMapper tutorMapper;
+  private final HomeworkTaskMapper homeworkTaskMapper;
 
   /**
    * Создание новой задачи без файла.
    */
   @PostMapping(consumes = "application/json")
-  public ResponseEntity<Task> createTask(@RequestBody Task task) {
-    Task created = taskService.createTask(task);
+  public ResponseEntity<Task> createTask(@RequestBody TaskNRDto taskNRDto) {
+    Task toCreate = taskMapper.toNREntity(taskNRDto);
+    Task created = taskService.createTask(toCreate);
     return ResponseEntity.ok(created);
   }
 
@@ -32,10 +43,11 @@ public class TaskController {
    * JSON-часть запроса должна быть передана в поле "task",
    * файл – в поле "file".
    */
-  @PostMapping(value = "/with-file", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-  public ResponseEntity<Task> createTaskWithFile(@RequestPart("task") Task task,
+  @PostMapping(value = "/with-file")
+  public ResponseEntity<Task> createTaskWithFile(@RequestPart("task") TaskNRDto taskNRDto,
                                                  @RequestPart("file") MultipartFile file) throws IOException {
-    Task created = taskService.createTaskWithFile(task, file);
+    Task toCreate = taskMapper.toNREntity(taskNRDto);
+    Task created = taskService.createTaskWithFile(toCreate, file);
     return ResponseEntity.ok(created);
   }
 
@@ -44,19 +56,30 @@ public class TaskController {
    * Если параметр full=true, возвращаются все связи (используется метод getTaskByIdWithAllRelations).
    */
   @GetMapping("/{id}")
-  public ResponseEntity<Task> getTask(@PathVariable Integer id,
+  public ResponseEntity<?> getTask(@PathVariable Integer id,
                                       @RequestParam(value = "full", defaultValue = "false") boolean full) {
-    Task task = full ? taskService.getTaskByIdWithAllRelations(id) : taskService.getTaskById(id);
-    return ResponseEntity.ok(task);
+    Task task;
+    if (full) {
+      task = taskService.getTaskByIdWithAllRelations(id);
+      TaskRDto taskRDto = taskMapper.toRDto(taskMapper.toNRDto(task));
+      TutorNRDto tutorNRDto = tutorMapper.toNRDto(task.getTutor());
+      taskRDto.setTutor(tutorMapper.toNRDto(task.getTutor()));
+      taskRDto.setHomeworks(homeworkTaskMapper.toHDtos(task.getHomeworks()));
+      return ResponseEntity.ok(taskRDto);
+    }
+    else {
+      return ResponseEntity.ok(taskMapper.toNRDto(taskService.getTaskById(id)));
+    }
   }
 
   /**
    * Получение списка всех задач.
    */
   @GetMapping
-  public ResponseEntity<List<Task>> getAllTasks() {
+  public ResponseEntity<List<TaskNRDto>> getAllTasks() {
     List<Task> tasks = taskService.getAllTasks();
-    return ResponseEntity.ok(tasks);
+    List<TaskNRDto> taskNRDtos = taskMapper.toNRDtos(tasks);
+    return ResponseEntity.ok(taskNRDtos);
   }
 
   /**
@@ -64,11 +87,15 @@ public class TaskController {
    * JSON-часть запроса передаётся в поле "task", файл – в поле "file" (необязательный).
    */
   @PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-  public ResponseEntity<Task> updateTask(@PathVariable Integer id,
-                                         @RequestPart("task") Task task,
+  public ResponseEntity<TaskRDto> updateTask(@PathVariable Integer id,
+                                         @RequestPart("task") TaskNRDto taskNRDto,
                                          @RequestPart(value = "file", required = false) MultipartFile file) throws IOException {
-    Task updated = taskService.updateTask(id, task, file);
-    return ResponseEntity.ok(updated);
+    Task toUpdate = taskMapper.toNREntity(taskNRDto);
+    Task updated = taskService.updateTask(id, toUpdate, file);
+    TaskRDto taskRDto = taskMapper.toRDto(taskMapper.toNRDto(updated));
+    taskRDto.setHomeworks(homeworkTaskMapper.toHDtos(updated.getHomeworks()));
+    taskRDto.setTutor(tutorMapper.toNRDto(updated.getTutor()));
+    return ResponseEntity.ok(taskRDto);
   }
 
   /**

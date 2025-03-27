@@ -2,12 +2,15 @@ package com.example.easy_learning.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.*;
 
 import java.util.Set;
 
 @Entity
 @Table(name = "homework")
-@Data
+@Getter
+@Setter
+@NoArgsConstructor
 public class Homework {
 
     @Id

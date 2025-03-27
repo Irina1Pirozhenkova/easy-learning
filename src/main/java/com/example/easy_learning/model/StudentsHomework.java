@@ -1,11 +1,14 @@
 package com.example.easy_learning.model;
 
 import jakarta.persistence.*;
+import lombok.*;
 import lombok.Data;
 
 @Entity
 @Table(name = "students_homework")
-@Data
+@Getter
+@Setter
+@NoArgsConstructor
 public class StudentsHomework {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -21,7 +21,7 @@ public class TaskService {
   private final TaskRepository taskRepository;
 
   // Путь к папке, где храним все загруженные файлы
-  private final String uploadDir = "uploads";
+  private final String uploadDir = "./uploads";
 
   /**
    * Создаём новую задачу (Task) без файла.
@@ -52,8 +52,9 @@ public class TaskService {
   }
 
   public Task getTaskByIdWithAllRelations(Integer id) {
-    return taskRepository.findByIdWithAllRelations(id)
+    Task task = taskRepository.findByIdWithAllRelations(id)
             .orElseThrow(() -> new RuntimeException("Task not found with ID = " + id));
+    return task;
   }
 
   /**
@@ -106,7 +107,7 @@ public class TaskService {
     String uniqueFileName = UUID.randomUUID().toString() + extension;
 
     // Создаём директорию uploads, если её нет
-    Path uploadPath = Paths.get(uploadDir);
+    Path uploadPath = Paths.get("/app", uploadDir);
     if (!Files.exists(uploadPath)) {
       Files.createDirectories(uploadPath);
     }
@@ -115,6 +116,9 @@ public class TaskService {
     Path filePath = uploadPath.resolve(uniqueFileName);
 
     // Сохраняем файл на диск
+    if (!Files.exists(filePath)) {
+      Files.createFile(filePath);
+    }
     file.transferTo(filePath.toFile());
 
     // Здесь вы можете вернуть абсолютный путь, или URL, или относительный путь
@@ -134,9 +138,9 @@ public class TaskService {
     Task task = getTaskById(taskId);
     String photoPath = task.getPhotoUrl();
     Path path = Paths.get(photoPath);
-    if (!Files.exists(path)) {
-      throw new RuntimeException("Photo file not found for task with ID = " + taskId);
-    }
+//    if (!Files.exists(path)) {
+//      throw new RuntimeException("Photo file not found for task with ID = " + taskId);
+//    }
     return Files.readAllBytes(path);
   }
 }

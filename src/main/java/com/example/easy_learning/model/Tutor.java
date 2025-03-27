@@ -2,13 +2,18 @@ package com.example.easy_learning.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.time.LocalDate;
 import java.util.Set;
 
 @Entity
 @Table(name = "tutor")
-@Data
+@Getter
+@Setter
+@NoArgsConstructor
 public class Tutor {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,4 +30,7 @@ public class Tutor {
 
     @OneToMany(mappedBy = "tutor", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Homework> homeworks;
+
+    @OneToMany(mappedBy = "tutor", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<StudentsTutors> students;
 }

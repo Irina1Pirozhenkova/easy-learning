@@ -1,6 +1,7 @@
 package com.example.easy_learning.model;
 
 import jakarta.persistence.*;
+import lombok.*;
 import lombok.Data;
 
 import java.time.LocalDate;
@@ -10,7 +11,9 @@ import java.util.Set;
 
 @Entity
 @Table(name = "student")
-@Data
+@Getter
+@Setter
+@NoArgsConstructor
 public class Student {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

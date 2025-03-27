@@ -1,13 +1,16 @@
 package com.example.easy_learning.model;
 
 import jakarta.persistence.Column;
+import lombok.*;
 import jakarta.persistence.Embeddable;
 import lombok.Data;
 
 import java.time.LocalDate;
 
 @Embeddable
-@Data
+@Getter
+@Setter
+@NoArgsConstructor
 public class StudentPersonalInfo {
   @Column(name = "firstname", nullable = false)
   private String firstname;

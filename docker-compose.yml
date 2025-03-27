@@ -5,6 +5,8 @@ services:
     container_name: easy_learning_app
     ports:
       - "8080:8080"
+    volumes:
+      - /mnt/c/Users/Alenushka/uploads:/app/uploads
     depends_on:
       - mysql
 
