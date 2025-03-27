@@ -55,7 +55,6 @@
 student ↔ tutor через students_tutors.
 student ↔ homework через students_homework.
 homework ↔ task через homework_task.
-
 - Один-ко-многим:
 tutor → homework, tutor → task.
   
@@ -65,3 +64,31 @@ tutor → homework, tutor → task.
 - Настроено хеширование паролей
 - Написаны скрипты для заполнения базы данных тестовыми данными
 - Реализован функционал для работы с данными в соответствии с тематикой приложения (сервисы, контроллеры, репозитории)
+
+##### Разработка ORM-моделей
+Для взаимодействия с базой данных были разработаны ORM-модели с помощью Hibernate.
+Определены основные сущности:
+Homework, Task, Student, Tutor, а также сущности-связки HomeworkTask, StudentsHomework, StudentsTutors.
+Между сущностями настроены связи @OneToMany, @ManyToOne, @ManyToMany, обеспечивающие корректное отображение отношений.
+
+##### Для безопасности реализовано хеширование паролей с помощью bcrypt – популярного алгоритма, обеспечивающего защиту от атак на пароли.
+##### Проект создан с помощью Spring Initializr, на базе Spring Boot.
+##### Для управления структурой базы данных используется Liquibase – инструмент для миграций.
+
+##### Также были разработаны:
+- Контроллеры: HomeworkController, StudentController, TaskController, TutorController
+- Сервисы: HomeworkService, StudentService, TaskService, TutorService
+- JPA-репозитории: HomeworkRepository, StudentRepository, TaskRepository, TutorRepository
+
+### Лабораторная работа 2
+- Разработаны CRUD-методы для работы с моделями
+- Настроены маршруты и обработка запросов
+- Для тестирования API использовался Postman (для проверки запросов)
+
+##### Структура API
+
+
+
+
+##### Примеры запросов и ответов описаны в отчёте, который доступен по ссылке
+
