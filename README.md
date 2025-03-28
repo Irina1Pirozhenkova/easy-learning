@@ -12,7 +12,7 @@
 - Группировка заданий в домашние работы.
 - Назначение заданий ученикам.
 
-### Лабораторная работа 0 
+## Лабораторная работа 0 
 - Разработана логическую схема базы данных
 - Определена структура API
 - Создан Git-репозиторий
@@ -58,7 +58,7 @@ homework ↔ task через homework_task.
 - Один-ко-многим:
 tutor → homework, tutor → task.
   
-### Лабораторная работа 1
+## Лабораторная работа 1
 - Развернута MySQL в Docker
 - Разработаны ORM-модели с использованием Hibernate, настроены миграции
 - Настроено хеширование паролей
@@ -80,20 +80,20 @@ tutor → homework, tutor → task.
 - Сервисы: HomeworkService, StudentService, TaskService, TutorService
 - JPA-репозитории: HomeworkRepository, StudentRepository, TaskRepository, TutorRepository
 
-### Лабораторная работа 2
+## Лабораторная работа 2
 - Разработаны CRUD-методы для работы с моделями
 - Настроены маршруты и обработка запросов
 - Для тестирования API использовался Postman (для проверки запросов)
 
-##### Структура API
+#### Структура API
 
-##### Homework:
+#### Homework:
 **POST /api/homeworks** Создание домашнего задания.  
 Request body: JSON с информацией о задании.  
 Response: 200 OK (Homework), 400 Bad Request  
 
 **GET /api/homeworks/{id}** Получить домашку по ID (опционально с задачами и студентами).  
-Query param: `?full=true`  
+Query param: ?full=true  
 Response: 200 OK, 404 Not Found  
 
 **GET /api/homeworks** Получить список всех домашних заданий.  
@@ -114,7 +114,33 @@ Response: 200 OK, 400 Bad Request
 Request body: список ID задач  
 Response: 200 OK, 404 Not Found
 
+#### Task:
+**POST /api/tasks** Создание новой задачи без файла.
+Response: 200 OK (Task), 400 Bad Request (если тело запроса некорректное)
+Request body:JSON с информацией о задании без файла
+
+**POST /api/tasks/with-file** Создание новой задачи с файлом.
+Response: 200 OK (Task), 400 Bad Request (если файл или данные некорректные)
+Request body: JSON с информацией о задании с файлом
+
+**GET /api/tasks/{id}** Получить задачу по ID.
+Response: 200 OK, 404 Not Found (если не найдено)
+
+**GET /api/tasks** Получить все задачи.
+Response: 200 OK
+
+**PUT /api/tasks/{id}** Обновить задачу.
+Response: 200 OK, 404 Not Found
+Request body: JSON 
+
+**DELETE /api/tasks/{id}** Удалить задачу по ID.
+Response: 204 No Content, 404 Not Found
+
+**GET /api/tasks/{id}/photo** Получить фото задачи по ID.
+Response: 200 OK (image/jpeg или image/png), 404 Not Found
+
 
 
 ##### Примеры запросов и ответов описаны в отчёте, который доступен по ссылке
+https://docs.google.com/document/d/1odeRMj0IMw941y2SPaJtfBGpDKGm13SqU9hXOAfoywI/edit?usp=sharing
 
