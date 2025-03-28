@@ -63,8 +63,8 @@ public class StudentController {
   @PutMapping("/{id}")
   public ResponseEntity<StudentRDto> updateStudent(@PathVariable Integer id, @RequestBody StudentRDto studentRDto) {
     Student toUpdate = studentMapper.toNREntity(studentMapper.toNRDto(studentRDto));
-    toUpdate.setHomeworks(studentsHomeworkMapper.toEntitiesFromHDto(studentRDto.getHomeworks()));
-    toUpdate.setTutors(studentsTutorsMapper.toEntitiesFromTDto(studentRDto.getTutors()));
+    if (studentRDto.getHomeworks() != null) toUpdate.setHomeworks(studentsHomeworkMapper.toEntitiesFromHDto(studentRDto.getHomeworks()));
+    if (studentRDto.getTutors() != null) toUpdate.setTutors(studentsTutorsMapper.toEntitiesFromTDto(studentRDto.getTutors()));
 
     Student updated = studentService.updateStudent(id, toUpdate);
 
@@ -78,31 +78,5 @@ public class StudentController {
   public ResponseEntity<Void> deleteStudent(@PathVariable Integer id) {
     studentService.deleteStudent(id);
     return ResponseEntity.noContent().build();
-  }
-
-  /**
-   * Добавляет новые домашние задания для студента.
-   * Принимает набор id домашних заданий и возвращает обновленного студента.
-   */
-  @PostMapping("/{id}/homeworks")
-  public ResponseEntity<?> addHomeworksToStudent(@PathVariable Integer id,
-                                                 @RequestBody Set<Integer> homeworkIds) {
-    try {
-      Student updated = studentService.addHomeworksToStudent(id, homeworkIds);
-      return ResponseEntity.ok(updated);
-    } catch (Exception e) {
-      return ResponseEntity.badRequest().body(e.getMessage());
-    }
-  }
-
-  /**
-   * Удаляет связи с домашними заданиями у студента.
-   * Принимает список id домашних заданий, которые необходимо убрать.
-   */
-  @DeleteMapping("/{id}/homeworks")
-  public ResponseEntity<Student> removeHomeworksFromStudent(@PathVariable Integer id,
-                                                            @RequestBody List<Integer> homeworkIds) {
-    Student updated = studentService.removeHomeworksFromStudent(id, homeworkIds);
-    return ResponseEntity.ok(updated);
   }
 }

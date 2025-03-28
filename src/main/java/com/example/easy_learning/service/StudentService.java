@@ -1,9 +1,6 @@
 package com.example.easy_learning.service;
 
-import com.example.easy_learning.model.Homework;
-import com.example.easy_learning.model.HomeworkTask;
-import com.example.easy_learning.model.Student;
-import com.example.easy_learning.model.StudentsHomework;
+import com.example.easy_learning.model.*;
 import com.example.easy_learning.repository.HomeworkRepository;
 import com.example.easy_learning.repository.StudentRepository;
 import jakarta.transaction.Transactional;
@@ -19,6 +16,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class StudentService {
 
   private final StudentRepository studentRepository;
@@ -40,28 +38,11 @@ public class StudentService {
             .orElseThrow(() -> new RuntimeException("Student not found with ID = " + id));
   }
 
+  @Transactional
   public Student updateStudent(Integer id, Student updatedStudent) {
     Student existingStudent = getStudentByIdWithAllRelations(id);
     if (updatedStudent.getHomeworks() != null) {
-      Set<Integer> oldHomeworks = updatedStudent.getHomeworks()
-              .stream().filter(h -> h.getId() != null)
-              .map(StudentsHomework::getId).collect(Collectors.toSet());
-
-      existingStudent.getHomeworks()
-              .stream().filter(h -> !oldHomeworks.contains(h.getId()))
-              .forEach(h -> h.setStudent(null));
-
-      Set<StudentsHomework> test = existingStudent.getHomeworks()
-              .stream().filter(h -> oldHomeworks.contains(h.getId()))
-              .collect(Collectors.toSet());
-      existingStudent.setHomeworks(test);
-
-      Set<StudentsHomework> newHomeworks = updatedStudent.getHomeworks()
-              .stream().filter(h -> h.getId() == null)
-              .map(h -> {
-                h.setStudent(existingStudent);
-                return h;
-              }).collect(Collectors.toSet());
+      existingStudent.setHomeworks(updatedStudent.getHomeworks());
     }
 
     if (updatedStudent.getTutors() != null) {
@@ -83,69 +64,5 @@ public class StudentService {
 
   public List<Student> getAllStudents() {
     return studentRepository.findAll();
-  }
-
-  /**
-   * Добавляет новые домашние задания (StudentsHomework) для студента.
-   * Если хотя бы один из переданных id уже присутствует у студента,
-   * метод бросает RuntimeException.
-   *
-   * @param studentId   идентификатор студента
-   * @param homeworkIds набор id домашних заданий для добавления
-   * @return обновленный объект Student с новыми связями
-   */
-  @Transactional
-  public Student addHomeworksToStudent(Integer studentId, Set<Integer> homeworkIds) {
-    // Получаем студента со всеми связями (используя метод с @EntityGraph)
-    Student student = studentRepository.findStudentWithAssociationsById(studentId)
-            .orElseThrow(() -> new RuntimeException("Student not found with ID = " + studentId));
-
-    // Проверяем, что ни один из новых id не пересекается с уже существующими
-    for (Integer hwId : homeworkIds) {
-      boolean exists = student.getHomeworks().stream()
-              .anyMatch(sh -> sh.getHomework().getId().equals(hwId));
-      if (exists) {
-        throw new RuntimeException("Homework with id " + hwId + " already exists for the student");
-      }
-    }
-
-    // Для каждого нового id получаем Homework и создаем связь StudentsHomework
-    for (Integer hwId : homeworkIds) {
-      Homework homework = homeworkRepository.findById(hwId)
-              .orElseThrow(() -> new RuntimeException("Homework with id " + hwId + " not found"));
-      StudentsHomework sh = new StudentsHomework();
-      sh.setHomework(homework);
-      sh.setStudent(student);
-    }
-
-    return studentRepository.save(student);
-  }
-
-  /**
-   * Удаляет из студента связи с домашними заданиями, идентификаторы которых переданы в homeworkIds.
-   * Для каждой найденной связи вызывается setter с null для student, что при orphanRemoval
-   * приводит к удалению соответствующей записи из БД.
-   *
-   * @param studentId   идентификатор студента
-   * @param homeworkIds список id домашних заданий, связи с которыми необходимо убрать
-   * @return обновленный объект Student без указанных связей
-   */
-  @Transactional
-  public Student removeHomeworksFromStudent(Integer studentId, List<Integer> homeworkIds) {
-    // Получаем студента со всеми связями
-    Student student = studentRepository.findStudentWithAssociationsById(studentId)
-            .orElseThrow(() -> new RuntimeException("Student not found with ID = " + studentId));
-
-    // Удаляем связи, если id домашек содержатся в homeworkIds.
-    // Используем removeIf, и для каждой связи вызываем setter с null для student.
-    student.getHomeworks().removeIf(sh -> {
-      if (homeworkIds.contains(sh.getHomework().getId())) {
-        sh.setStudent(null);
-        return true;
-      }
-      return false;
-    });
-
-    return studentRepository.save(student);
   }
 }

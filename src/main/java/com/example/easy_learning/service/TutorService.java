@@ -2,6 +2,7 @@ package com.example.easy_learning.service;
 
 import com.example.easy_learning.model.Tutor;
 import com.example.easy_learning.repository.TutorRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -11,6 +12,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class TutorService {
 
   private final TutorRepository tutorRepository;

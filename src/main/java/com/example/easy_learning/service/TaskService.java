@@ -2,6 +2,7 @@ package com.example.easy_learning.service;
 
 import com.example.easy_learning.model.Task;
 import com.example.easy_learning.repository.TaskRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -16,6 +17,7 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class TaskService {
 
   private final TaskRepository taskRepository;

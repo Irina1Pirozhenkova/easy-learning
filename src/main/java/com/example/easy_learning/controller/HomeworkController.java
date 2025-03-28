@@ -52,15 +52,26 @@ public class HomeworkController {
   }
 
   @GetMapping
-  public ResponseEntity<List<Homework>> getAllHomeworks() {
+  public ResponseEntity<List<HomeworkNRDto>> getAllHomeworks() {
     List<Homework> homeworks = homeworkService.getAllHomeworks();
-    return ResponseEntity.ok(homeworks);
+    List<HomeworkNRDto> homeworkNRDtos = homeworkMapper.toNRDtos(homeworks);
+    return ResponseEntity.ok(homeworkNRDtos);
   }
 
   @PutMapping("/{id}")
-  public ResponseEntity<Homework> updateHomework(@PathVariable Integer id, @RequestBody Homework homework) {
-    Homework updated = homeworkService.updateHomework(id, homework);
-    return ResponseEntity.ok(updated);
+  public ResponseEntity<HomeworkRDto> updateHomework(@PathVariable Integer id, @RequestBody HomeworkRDto homeworkRDto) {
+    Homework toUpdate = homeworkMapper.toNREntity(homeworkMapper.toNRDto(homeworkRDto));
+    if (homeworkRDto.getTutor() != null) toUpdate.setTutor(tutorMapper.toNREntity(homeworkRDto.getTutor()));
+    if (homeworkRDto.getTasks() != null) toUpdate.setTasks(homeworkTaskMapper.toEntitiesFromTDtos(homeworkRDto.getTasks()));
+    if (homeworkRDto.getStudents() != null) toUpdate.setStudents(studentsHomeworkMapper.toEntitiesFromSDto(homeworkRDto.getStudents()));
+
+    toUpdate = homeworkService.updateHomework(id, toUpdate);
+
+    homeworkRDto = homeworkMapper.toRDto(homeworkMapper.toNRDto(toUpdate));
+    homeworkRDto.setTasks(homeworkTaskMapper.toTDtos(toUpdate.getTasks()));
+    homeworkRDto.setStudents(studentsHomeworkMapper.toSDtoSet(toUpdate.getStudents()));
+    homeworkRDto.setTutor(tutorMapper.toNRDto(toUpdate.getTutor()));
+    return ResponseEntity.ok(homeworkRDto);
   }
 
   @DeleteMapping("/{id}")

@@ -64,7 +64,6 @@ public class TaskController {
     if (full) {
       task = taskService.getTaskByIdWithAllRelations(id);
       TaskRDto taskRDto = taskMapper.toRDto(taskMapper.toNRDto(task));
-      TutorNRDto tutorNRDto = tutorMapper.toNRDto(task.getTutor());
       taskRDto.setTutor(tutorMapper.toNRDto(task.getTutor()));
       taskRDto.setHomeworks(homeworkTaskMapper.toHDtos(task.getHomeworks()));
       return ResponseEntity.ok(taskRDto);

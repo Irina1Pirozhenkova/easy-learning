@@ -5,6 +5,7 @@ import com.example.easy_learning.model.HomeworkTask;
 import com.example.easy_learning.model.Task;
 import com.example.easy_learning.repository.HomeworkRepository;
 import com.example.easy_learning.repository.TaskRepository;
+import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,10 +15,12 @@ import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class HomeworkService {
 
   private final HomeworkRepository homeworkRepository;
   private final TaskRepository taskRepository;
+  private final EntityManager entityManager;
 
   public Homework createHomework(Homework homework) {
     return homeworkRepository.save(homework);
@@ -34,13 +37,21 @@ public class HomeworkService {
   }
 
   public Homework updateHomework(Integer id, Homework updatedHomework) {
-    Homework existing = getHomeworkById(id);
+    Homework existing = getHomeworkWithAssociationsById(id);
+
+    System.out.println(entityManager.contains(existing));
+
+    if (updatedHomework.getTasks() != null) existing.setTasks(updatedHomework.getTasks());
+    if (updatedHomework.getStudents() != null) existing.setStudents(updatedHomework.getStudents());
+    if (updatedHomework.getTutor() != null) existing.setTutor(updatedHomework.getTutor());
+
     existing.setClassName(updatedHomework.getClassName());
     existing.setSubject(updatedHomework.getSubject());
     existing.setTopic(updatedHomework.getTopic());
     existing.setDifficulty(updatedHomework.getDifficulty());
-    existing.setTutor(updatedHomework.getTutor());
-    return homeworkRepository.save(existing);
+
+    existing = homeworkRepository.save(existing);
+    return existing;
   }
 
   public void deleteHomework(Integer id) {
