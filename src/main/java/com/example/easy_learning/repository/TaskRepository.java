@@ -11,7 +11,7 @@ import java.util.Optional;
 
 public interface TaskRepository extends JpaRepository<Task, Integer> {
 
-  @EntityGraph(attributePaths = {"homeworks", "tutor"})
+  @EntityGraph(attributePaths = {"homeworks", "homeworks.homework","tutor"})
   @Query("SELECT t FROM Task t WHERE t.id = :id")
   Optional<Task> findByIdWithAllRelations(@Param("id") Integer id);
 }

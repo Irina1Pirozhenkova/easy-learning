@@ -63,7 +63,7 @@ public class TaskService {
    * Обновить Task, в том числе, если нужен перезагрузить новый файл.
    */
   public Task updateTask(Integer id, Task updatedTask, MultipartFile file) throws IOException {
-    Task existingTask = getTaskById(id);
+    Task existingTask = getTaskByIdWithAllRelations(id);
 
     // Обновляем поля
     existingTask.setClassName(updatedTask.getClassName());
@@ -77,8 +77,8 @@ public class TaskService {
       String photoUrl = saveFile(file);
       existingTask.setPhotoUrl(photoUrl);
     }
-
-    return taskRepository.save(existingTask);
+    taskRepository.save(existingTask);
+    return existingTask;
   }
 
   /**
@@ -128,7 +128,7 @@ public class TaskService {
     return uploadDir + File.separator + uniqueFileName;
   }
 
-    /**
+  /**
    * Получает содержимое файла photo для Task по его ID.
    * Если файл не найден, выбрасывается RuntimeException.
    *

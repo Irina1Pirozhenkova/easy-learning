@@ -92,7 +92,9 @@ public class TaskController {
                                          @RequestPart("task") TaskNRDto taskNRDto,
                                          @RequestPart(value = "file", required = false) MultipartFile file) throws IOException {
     Task toUpdate = taskMapper.toNREntity(taskNRDto);
+
     Task updated = taskService.updateTask(id, toUpdate, file);
+
     TaskRDto taskRDto = taskMapper.toRDto(taskMapper.toNRDto(updated));
     taskRDto.setHomeworks(homeworkTaskMapper.toHDtos(updated.getHomeworks()));
     taskRDto.setTutor(tutorMapper.toNRDto(updated.getTutor()));

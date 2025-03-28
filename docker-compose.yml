@@ -6,7 +6,7 @@ services:
     ports:
       - "8080:8080"
     volumes:
-      - /mnt/c/Users/Alenushka/uploads:/app/uploads
+      - photo:/app/uploads
     depends_on:
       - mysql
 
@@ -24,3 +24,4 @@ services:
 
 volumes:
   mysql_data:
+  photo:
