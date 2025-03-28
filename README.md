@@ -89,58 +89,81 @@ tutor → homework, tutor → task.
 
 #### Homework:
 **POST /api/homeworks** Создание домашнего задания.  
-Request body: JSON с информацией о задании.  
-Response: 200 OK (Homework), 400 Bad Request  
+- Request body: JSON с информацией о задании.  
+- Response: 200 OK (Homework), 400 Bad Request  
 
 **GET /api/homeworks/{id}** Получить домашку по ID (опционально с задачами и студентами).  
-Query param: ?full=true  
-Response: 200 OK, 404 Not Found  
+- Query param: ?full=true  
+- Response: 200 OK, 404 Not Found  
 
 **GET /api/homeworks** Получить список всех домашних заданий.  
-Response: 200 OK  
+- Response: 200 OK  
 
 **PUT /api/homeworks/{id}** Обновить домашнее задание.  
-Request body: JSON  
-Response: 200 OK, 400 Bad Request, 404 Not Found  
+- Request body: JSON  
+- Response: 200 OK, 400 Bad Request, 404 Not Found  
 
 **DELETE /api/homeworks/{id}** Удалить домашнее задание.  
-Response: 204 No Content, 404 Not Found  
+- Response: 204 No Content, 404 Not Found  
 
 **POST /api/homeworks/{id}/tasks** Добавить задачи к домашнему заданию.  
-Request body: список ID задач  
-Response: 200 OK, 400 Bad Request  
+- Request body: список ID задач  
+- Response: 200 OK, 400 Bad Request  
 
 **DELETE /api/homeworks/{id}/tasks** Удалить задачи из домашки.  
-Request body: список ID задач  
-Response: 200 OK, 404 Not Found
+- Request body: список ID задач  
+- Response: 200 OK, 404 Not Found
 
 #### Task:
 **POST /api/tasks** Создание новой задачи без файла.
-Response: 200 OK (Task), 400 Bad Request (если тело запроса некорректное)
-Request body:JSON с информацией о задании без файла
+- Response: 200 OK (Task), 400 Bad Request (если тело запроса некорректное)
+- Request body:JSON с информацией о задании без файла
 
 **POST /api/tasks/with-file** Создание новой задачи с файлом.
-Response: 200 OK (Task), 400 Bad Request (если файл или данные некорректные)
-Request body: JSON с информацией о задании с файлом
+- Response: 200 OK (Task), 400 Bad Request (если файл или данные некорректные)
+- Request body: JSON с информацией о задании с файлом
 
 **GET /api/tasks/{id}** Получить задачу по ID.
-Response: 200 OK, 404 Not Found (если не найдено)
+- Response: 200 OK, 404 Not Found (если не найдено)
 
 **GET /api/tasks** Получить все задачи.
-Response: 200 OK
+- Response: 200 OK
 
 **PUT /api/tasks/{id}** Обновить задачу.
-Response: 200 OK, 404 Not Found
-Request body: JSON 
+- Response: 200 OK, 404 Not Found
+- Request body: JSON 
 
 **DELETE /api/tasks/{id}** Удалить задачу по ID.
-Response: 204 No Content, 404 Not Found
+- Response: 204 No Content, 404 Not Found
 
 **GET /api/tasks/{id}/photo** Получить фото задачи по ID.
-Response: 200 OK (image/jpeg или image/png), 404 Not Found
+- Response: 200 OK (image/jpeg или image/png), 404 Not Found
 
+#### Student:
+**POST /api/students** Создание нового студента.
+- Response: 200 OK, 400 Bad Request (если данные некорректные)
+- Request body: JSON с информацией о студенте.  
 
+**GET /api/students/{id}** Получить информацию о студенте по ID.
+- Response: 200 OK, 404 Not Found
 
-##### Примеры запросов и ответов описаны в отчёте, который доступен по ссылке
+**GET /api/students** Получить список всех студентов.
+- Response: 200 OK
+
+**PUT /api/students/{id}** Обновить данные студента.
+ Response: 200 OK, 404 Not Found (если ID не найден), 400 Bad Request (если данные некорректные)
+ Request body:  JSON  
+
+**DELETE /api/students/{id}** Удалить студента по ID.
+- Response: 204 No Content, 404 Not Found
+
+**POST /api/students/{id}/homeworks** Добавить домашки студенту.
+- Response: 200 OK, 400 Bad Request
+- Request body: JSON с информацией о домашках студента.  
+
+**DELETE /api/students/{id}/homeworks** Удалить привязку к домашкам у студента.
+- Response: 200 OK
+
+##### Конкретные примеры запросов и ответов описаны в отчёте, который доступен по ссылке
 https://docs.google.com/document/d/1odeRMj0IMw941y2SPaJtfBGpDKGm13SqU9hXOAfoywI/edit?usp=sharing
 
