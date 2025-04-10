@@ -1,7 +1,6 @@
 spring:
   datasource:
     url: jdbc:mysql://mysql:3306/easy_learning
-#    url: jdbc:mysql://localhost:1212/easy_learning
     username: root
     password: 12345
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -19,7 +18,9 @@ spring:
   liquibase:
     change-log: classpath:db/changelog/db.changelog-master.xml
     enabled: true
-  security:
-    user:
-      name: admin
-      password: $2a$12$HXd78PaHX.RUjzLhRTaLquTW2HzskPCm7Doq3RUXBsiQ0wCgT3iZW
+
+security:
+  jwt:
+    secret: ZGNweGNwbGN4eHh4eHh4eHhzc3Nzc3Nzc3NzeA==
+    access: 1
+    refresh: 30

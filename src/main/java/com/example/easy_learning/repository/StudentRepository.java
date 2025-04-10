@@ -19,4 +19,6 @@ public interface StudentRepository extends JpaRepository<Student, Integer> {
           "tutors.tutor"
   })
   Optional<Student> findStudentWithAssociationsById(@Param("id") Integer id);
+  Optional<Student> findByStudentPersonalInfoEmail(String email);
+
 }

@@ -5,6 +5,7 @@ import com.example.easy_learning.repository.TutorRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -46,4 +47,10 @@ public class TutorService {
   public List<Tutor> getAllTutors() {
     return tutorRepository.findAll();
   }
+
+  public Tutor getByEmail(String email) {
+    return tutorRepository.findByPersonalInfoEmail(email)
+            .orElseThrow(() -> new UsernameNotFoundException("Преподаватель с email " + email + " не найден"));
+  }
+
 }

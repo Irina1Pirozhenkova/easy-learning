@@ -5,7 +5,9 @@ import com.example.easy_learning.repository.HomeworkRepository;
 import com.example.easy_learning.repository.StudentRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -21,7 +23,7 @@ public class StudentService {
 
   private final StudentRepository studentRepository;
   private final HomeworkRepository homeworkRepository;
-  private final BCryptPasswordEncoder passwordEncoder;
+  private final PasswordEncoder passwordEncoder;
 
   public Student createStudent(Student student) {
     student.setPassword(passwordEncoder.encode(student.getPassword()));
@@ -32,6 +34,8 @@ public class StudentService {
     return studentRepository.findById(id)
             .orElseThrow(() -> new RuntimeException("Student not found with ID = " + id));
   }
+
+
 
   public Student getStudentByIdWithAllRelations(Integer id) {
     return studentRepository.findStudentWithAssociationsById(id)
@@ -65,4 +69,11 @@ public class StudentService {
   public List<Student> getAllStudents() {
     return studentRepository.findAll();
   }
+
+
+  public Student getByEmail(String email) {
+    return studentRepository.findByStudentPersonalInfoEmail(email)
+            .orElseThrow(() -> new UsernameNotFoundException("Студент с email " + email + " не найден"));
+  }
+
 }
