@@ -58,7 +58,8 @@ public class ApplicationConfig {
                 )
                 .exceptionHandling(configurer ->
                         configurer.authenticationEntryPoint(
-                                        (request, response, exception) -> {
+                                        (request,
+                                         response, exception) -> {
                                             response.setStatus(
                                                     HttpStatus.UNAUTHORIZED //401
                                                             .value()
@@ -67,7 +68,8 @@ public class ApplicationConfig {
                                                     .write("Unauthorized.");
                                         })
                                 .accessDeniedHandler(
-                                        (request, response, exception) -> {
+                                        (request,
+                                         response, exception) -> {
                                             response.setStatus(
                                                     HttpStatus.FORBIDDEN
                                                             .value()
@@ -90,10 +92,5 @@ public class ApplicationConfig {
 
         return httpSecurity.build();
     }
-
-
-
-
-
 
 }

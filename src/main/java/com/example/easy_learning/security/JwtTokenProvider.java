@@ -146,7 +146,7 @@ public class JwtTokenProvider {
                 .getSubject();
     }
 
-    private String getUserType(String token) {
+    public String getUserType(String token) {
         return Jwts.parserBuilder()
                 .setSigningKey(key)
                 .build()
@@ -154,6 +154,7 @@ public class JwtTokenProvider {
                 .getBody()
                 .get("userType", String.class);
     }
+
 
     public Authentication getAuthentication(String token) {
         String userType = getUserType(token);
