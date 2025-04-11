@@ -7,6 +7,7 @@ import com.example.easy_learning.model.Homework;
 import org.mapstruct.Mapper;
 
 import java.util.List;
+import java.util.Set;
 
 @Mapper(componentModel = "spring")
 public interface HomeworkMapper {
@@ -20,6 +21,6 @@ public interface HomeworkMapper {
 
   List<Homework> toNREntities(List<HomeworkNRDto> homeworkNRDtos);
 
-  List<HomeworkNRDto> toNRDtos(List<Homework> homeworks);
+  Set<HomeworkNRDto> toNRDtos(Set<Homework> homeworks);
   List<HomeworkRDto> toRDtos(List<HomeworkNRDto> homeworkNRDtoss);
 }

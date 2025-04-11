@@ -2,7 +2,9 @@ package com.example.easy_learning.controller;
 
 import com.example.easy_learning.dto.TutorNRDto;
 import com.example.easy_learning.dto.TutorRDto;
-import com.example.easy_learning.mapper.*;
+import com.example.easy_learning.mapper.HomeworkMapper;
+import com.example.easy_learning.mapper.TaskMapper;
+import com.example.easy_learning.mapper.TutorMapper;
 import com.example.easy_learning.model.Tutor;
 import com.example.easy_learning.service.TutorService;
 import lombok.RequiredArgsConstructor;
@@ -10,76 +12,68 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/api/tutors")
+@RequestMapping("/api/tutor")
 @RequiredArgsConstructor
 public class TutorController {
 
-    private final TutorService tutorService;
-    private final TutorMapper tutorMapper;
-    private final HomeworkMapper homeworkMapper;
-    private final TaskMapper taskMapper;
-    private final StudentsTutorsMapper studentsTutorsMapper;
+  private final TutorService tutorService;
+  private final TutorMapper tutorMapper;
+  private final HomeworkMapper homeworkMapper;
+  private final TaskMapper taskMapper;
 
-    @PostMapping
-    public ResponseEntity<TutorNRDto> create(@RequestBody TutorNRDto tutorNRDto) {
-        Tutor tutor = tutorMapper.toNREntity(tutorNRDto);
-        Tutor saved = tutorService.create(tutor);
-        return ResponseEntity.ok(tutorMapper.toNRDto(saved));
+  @PostMapping
+  public ResponseEntity<TutorNRDto> createTutor(@RequestBody TutorNRDto tutorNRDto) {
+    Tutor toCreate = tutorMapper.toNREntity(tutorNRDto);
+    TutorNRDto created = tutorMapper.toNRDto(tutorService.create(toCreate));
+    return ResponseEntity.ok(created);
+  }
+
+  @GetMapping("/{id}")
+  public ResponseEntity<?> getTutor(@PathVariable Integer id,
+                                      @RequestParam(required = false, defaultValue = "false") boolean full) {
+    if (full) {
+      Tutor tutor = tutorService.getById(id);
+      TutorRDto tutorRDto = tutorMapper.toRDto(tutorMapper.toNRDto(tutor));
+      tutorRDto.setHomeworks(homeworkMapper.toNRDtos(tutor.getHomeworks()));
+      tutorRDto.setTasks(taskMapper.toNRDtos(tutor.getTasks()));
+      tutorRDto.setPassword(null);
+      return ResponseEntity.ok(tutorRDto);
     }
-/*
-    @PutMapping("/{id}")
-    public ResponseEntity<TutorRDto> update(@PathVariable Integer id, @RequestBody TutorRDto tutorRDto) {
-        Tutor updatedTutor = tutorMapper.toEntity(tutorRDto);
+    TutorNRDto tutorNRDto = tutorMapper.toNRDto(tutorService.getById(id));
+    tutorNRDto.setPassword(null);
+    return ResponseEntity.ok(tutorNRDto);
+  }
 
-        if (tutorRDto.getTasks() != null) {
-            updatedTutor.setTasks(taskMapper.toNREntities(tutorRDto.getTasks()));
-        }
-        if (tutorRDto.getHomeworks() != null) {
-            updatedTutor.setHomeworks(homeworkMapper.toNREntities(tutorRDto.getHomeworks()));
-        }
-        if (tutorRDto.getStudents() != null) {
-            updatedTutor.setStudents(studentsTutorsMapper.toEntitiesFromTDto(tutorRDto.getStudents()));
-        }
+  @GetMapping
+  public ResponseEntity<Set<TutorNRDto>> getAllTutors() {
+    Set<Tutor> tutors = tutorService.getAll();
+    Set<TutorNRDto> tutorNRDtos = tutorMapper.toNRDtos(Set.copyOf(tutors))
+            .stream().map(s -> {
+              s.setPassword(null);
+              return s;
+            }).collect(Collectors.toSet());
+    return ResponseEntity.ok(tutorNRDtos);
+  }
 
-        Tutor updated = tutorService.update(id, updatedTutor);
-        TutorRDto responseDto = tutorMapper.toRDto(updated);
+  @PutMapping("/{id}")
+  public ResponseEntity<TutorRDto> updateTutor(@PathVariable Integer id, @RequestBody TutorRDto tutorRDto) {
+    Tutor toUpdate = tutorMapper.toNREntity(tutorMapper.toNRDto(tutorRDto));
+    if (tutorRDto.getHomeworks() != null)
+      toUpdate.setHomeworks(Set.copyOf(homeworkMapper.toNREntities(List.copyOf(tutorRDto.getHomeworks()))));
 
+    Tutor updated = tutorService.update(id, toUpdate);
 
-        TutorRDto responseDto = tutorMapper.toRDto(tutorMapper.toNRDto(updated));
-        responseDto.setTasks(taskMapper.toNRDtos(updated.getTasks()));
-        responseDto.setHomeworks(homeworkMapper.toNRDtos(updated.getHomeworks()));
-        responseDto.setStudents(studentsTutorsMapper.toTDtoSet(updated.getStudents()));
-        responseDto.setPassword(null);
-        return ResponseEntity.ok(responseDto);
-    }
+    tutorRDto = tutorMapper.toRDto(tutorMapper.toNRDto(updated));
+    tutorRDto.setHomeworks(homeworkMapper.toNRDtos(updated.getHomeworks()));
+    return ResponseEntity.ok(tutorRDto);
+  }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<?> getById(@PathVariable Integer id,
-                                     @RequestParam(defaultValue = "false") boolean full) {
-        Tutor tutor = full ? tutorService.getByIdWithRelations(id) : tutorService.getById(id);
-        if (full) {
-            TutorRDto tutorRDto = tutorMapper.toRDto(tutorMapper.toNRDto(tutor));
-            tutorRDto.setTasks(taskMapper.toNRDtos(tutor.getTasks()));
-            tutorRDto.setHomeworks(homeworkMapper.toNRDtos(tutor.getHomeworks()));
-            tutorRDto.setStudents(studentsTutorsMapper.toTDtoSet(tutor.getStudents()));
-            tutorRDto.setPassword(null);
-            return ResponseEntity.ok(tutorRDto);
-        } else {
-            TutorNRDto tutorNRDto = tutorMapper.toNRDto(tutor);
-            tutorNRDto.setPassword(null);
-            return ResponseEntity.ok(tutorNRDto);
-        }
-    }
-
-    @GetMapping
-    public ResponseEntity<List<TutorNRDto>> getAll() {
-        List<TutorNRDto> dtos = tutorService.getAll().stream()
-                .map(tutorMapper::toNRDto)
-                .peek(t -> t.setPassword(null))
-                .collect(Collectors.toList());
-        return ResponseEntity.ok(dtos);
-    }*/
+  @DeleteMapping("/{id}")
+  public ResponseEntity<Void> deleteTutor(@PathVariable Integer id) {
+    return ResponseEntity.noContent().build();
+  }
 }

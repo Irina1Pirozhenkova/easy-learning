@@ -18,6 +18,7 @@ public interface TutorMapper {
 
   @Mapping(target = "personalInfo", source = "personalInfo")
   TutorNRDto toNRDto(Tutor tutor);
+  TutorNRDto toNRDto(TutorRDto tutor);
   TutorRDto toRDto(TutorNRDto tutorNRDto);
 
   Set<Tutor> toNREntities(Set<TutorNRDto> tutorNRDtos);

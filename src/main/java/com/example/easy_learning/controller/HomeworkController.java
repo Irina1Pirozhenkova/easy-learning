@@ -52,9 +52,9 @@ public class HomeworkController {
   }
 
   @GetMapping
-  public ResponseEntity<List<HomeworkNRDto>> getAllHomeworks() {
+  public ResponseEntity<Set<HomeworkNRDto>> getAllHomeworks() {
     List<Homework> homeworks = homeworkService.getAllHomeworks();
-    List<HomeworkNRDto> homeworkNRDtos = homeworkMapper.toNRDtos(homeworks);
+    Set<HomeworkNRDto> homeworkNRDtos = homeworkMapper.toNRDtos(Set.copyOf(homeworks));
     return ResponseEntity.ok(homeworkNRDtos);
   }
 

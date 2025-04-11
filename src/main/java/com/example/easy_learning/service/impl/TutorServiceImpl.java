@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Set;
 
 @Service
 @Transactional(readOnly = true)
@@ -60,7 +61,7 @@ public class TutorServiceImpl implements TutorService {
 
     @Override
     public Tutor getByEmail(String email) {
-        return tutorRepository.findByPersonalInfoEmail(email)
+        return tutorRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("Тьютор с email " + email + " не найден"));
     }
 
@@ -72,7 +73,7 @@ public class TutorServiceImpl implements TutorService {
     }
 
     @Override
-    public List<Tutor> getAll() {
-        return tutorRepository.findAll();
+    public Set<Tutor> getAll() {
+        return Set.copyOf(tutorRepository.findAll());
     }
 }

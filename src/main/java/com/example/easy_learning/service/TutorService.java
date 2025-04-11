@@ -3,6 +3,7 @@ package com.example.easy_learning.service;
 import com.example.easy_learning.model.Tutor;
 
 import java.util.List;
+import java.util.Set;
 
 public interface TutorService {
 
@@ -17,5 +18,5 @@ public interface TutorService {
 
   Tutor getByIdWithRelations(Integer id);
 
-  List<Tutor> getAll();
+  Set<Tutor> getAll();
 }

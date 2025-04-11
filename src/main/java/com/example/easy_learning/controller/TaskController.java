@@ -17,6 +17,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/api/tasks")
@@ -77,9 +78,9 @@ public class TaskController {
    * Получение списка всех задач.
    */
   @GetMapping
-  public ResponseEntity<List<TaskNRDto>> getAllTasks() {
+  public ResponseEntity<Set<TaskNRDto>> getAllTasks() {
     List<Task> tasks = taskService.getAllTasks();
-    List<TaskNRDto> taskNRDtos = taskMapper.toNRDtos(tasks);
+    Set<TaskNRDto> taskNRDtos = taskMapper.toNRDtos(Set.copyOf(tasks));
     return ResponseEntity.ok(taskNRDtos);
   }
 

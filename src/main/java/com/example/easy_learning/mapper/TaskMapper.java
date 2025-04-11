@@ -6,7 +6,6 @@ import com.example.easy_learning.model.Task;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
-import java.util.List;
 import java.util.Set;
 
 @Mapper(componentModel = "spring")
@@ -21,6 +20,6 @@ public interface TaskMapper {
 
   Set<Task> toNREntities(Set<TaskNRDto> taskNRDtos);
 
-  List<TaskNRDto> toNRDtos(List<Task> tasks);
+  Set<TaskNRDto> toNRDtos(Set<Task> tasks);
   Set<TaskRDto> toRDtos(Set<TaskNRDto> taskNRDtoss);
 }

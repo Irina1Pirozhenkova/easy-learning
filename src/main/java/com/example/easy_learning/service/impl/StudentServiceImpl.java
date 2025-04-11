@@ -18,7 +18,6 @@ import java.util.List;
 public class StudentServiceImpl implements StudentService {
 
     private final StudentRepository studentRepository;
-    private final HomeworkRepository homeworkRepository;
     private final PasswordEncoder passwordEncoder;
 
     @Override
@@ -71,7 +70,7 @@ public class StudentServiceImpl implements StudentService {
 
     @Override
     public Student getByEmail(String email) {
-        return studentRepository.findByStudentPersonalInfoEmail(email)
+        return studentRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("Студент с email " + email + " не найден"));
     }
 }

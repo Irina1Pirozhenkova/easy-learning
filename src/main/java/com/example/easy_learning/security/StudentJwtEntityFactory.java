@@ -9,7 +9,7 @@ public final class StudentJwtEntityFactory {
     public static StudentJwtEntity create(Student student) {
         return new StudentJwtEntity(
                 student.getId(),
-                student.getStudentPersonalInfo().getEmail(),
+                student.getEmail(),
                 student.getPassword()
         );
     }

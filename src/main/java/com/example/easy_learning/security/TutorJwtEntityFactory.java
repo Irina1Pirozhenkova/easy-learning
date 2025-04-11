@@ -9,7 +9,7 @@ public final class TutorJwtEntityFactory {
     public static TutorJwtEntity create(Tutor tutor) {
         return new TutorJwtEntity(
                 tutor.getId(),
-                tutor.getPersonalInfo().getEmail(),
+                tutor.getEmail(),
                 tutor.getPassword()
         );
     }

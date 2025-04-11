@@ -25,6 +25,8 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public JwtResponse login(JwtRequest loginRequest) {
         // Аутентификация
+        var auth = new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword());
+
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         loginRequest.getUsername(), loginRequest.getPassword()
@@ -57,15 +59,15 @@ public class AuthServiceImpl implements AuthService {
     private JwtResponse buildStudentTokens(Student student) {
         JwtResponse jwtResponse = new JwtResponse();
         jwtResponse.setId(student.getId().longValue());
-        jwtResponse.setUsername(student.getStudentPersonalInfo().getEmail());
+        jwtResponse.setUsername(student.getEmail());
         jwtResponse.setAccessToken(jwtTokenProvider.createAccessToken(
                 student.getId().longValue(),
-                student.getStudentPersonalInfo().getEmail(),
+                student.getEmail(),
                 "student"
         ));
         jwtResponse.setRefreshToken(jwtTokenProvider.createRefreshToken(
                 student.getId().longValue(),
-                student.getStudentPersonalInfo().getEmail(),
+                student.getEmail(),
                 "student"
         ));
         return jwtResponse;
@@ -74,15 +76,15 @@ public class AuthServiceImpl implements AuthService {
     private JwtResponse buildTutorTokens(Tutor tutor) {
         JwtResponse jwtResponse = new JwtResponse();
         jwtResponse.setId(tutor.getId().longValue());
-        jwtResponse.setUsername(tutor.getPersonalInfo().getEmail());
+        jwtResponse.setUsername(tutor.getEmail());
         jwtResponse.setAccessToken(jwtTokenProvider.createAccessToken(
                 tutor.getId().longValue(),
-                tutor.getPersonalInfo().getEmail(),
+                tutor.getEmail(),
                 "tutor"
         ));
         jwtResponse.setRefreshToken(jwtTokenProvider.createRefreshToken(
                 tutor.getId().longValue(),
-                tutor.getPersonalInfo().getEmail(),
+                tutor.getEmail(),
                 "tutor"
         ));
         return jwtResponse;

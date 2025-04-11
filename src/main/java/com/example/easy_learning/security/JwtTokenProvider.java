@@ -77,15 +77,15 @@ public class JwtTokenProvider {
 
         JwtResponse jwtResponse = new JwtResponse();
         jwtResponse.setId(student.getId().longValue());
-        jwtResponse.setUsername(student.getStudentPersonalInfo().getEmail());
+        jwtResponse.setUsername(student.getEmail());
         jwtResponse.setAccessToken(createAccessToken(
                 student.getId().longValue(),
-                student.getStudentPersonalInfo().getEmail(),
+                student.getEmail(),
                 "student"
         ));
         jwtResponse.setRefreshToken(createRefreshToken(
                 student.getId().longValue(),
-                student.getStudentPersonalInfo().getEmail(),
+                student.getEmail(),
                 "student"
         ));
         return jwtResponse;
@@ -100,15 +100,15 @@ public class JwtTokenProvider {
 
         JwtResponse jwtResponse = new JwtResponse();
         jwtResponse.setId(tutor.getId().longValue());
-        jwtResponse.setUsername(tutor.getPersonalInfo().getEmail());
+        jwtResponse.setUsername(tutor.getEmail());
         jwtResponse.setAccessToken(createAccessToken(
                 tutor.getId().longValue(),
-                tutor.getPersonalInfo().getEmail(),
+                tutor.getEmail(),
                 "tutor"
         ));
         jwtResponse.setRefreshToken(createRefreshToken(
                 tutor.getId().longValue(),
-                tutor.getPersonalInfo().getEmail(),
+                tutor.getEmail(),
                 "tutor"
         ));
         return jwtResponse;
