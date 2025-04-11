@@ -12,25 +12,22 @@ import java.time.LocalDate;
 @Setter
 @NoArgsConstructor
 public class StudentPersonalInfo {
-  @Column(name = "firstname", nullable = false)
+  @Column(name = "firstname")
   private String firstname;
 
-  @Column(name = "lastname", nullable = false)
+  @Column(name = "lastname")
   private String lastname;
 
-  @Column(name = "birthdate", nullable = false)
+  @Column(name = "birthdate")
   private LocalDate birthdate;
 
-  @Column(name = "class", nullable = false)
+  @Column(name = "class")
   private String className; // Используем "className", так как "class" — зарезервированное слово
 
-  @Column(name = "subject", nullable = false)
+  @Column(name = "subject")
   private String subject;
 
-  @Column(name = "email", nullable = false, unique = true)
-  private String email;
-
-  @Column(name = "phone", nullable = false, unique = true)
+  @Column(name = "phone", unique = true)
   private String phone;
 
   @Column(name = "telegram", unique = true)

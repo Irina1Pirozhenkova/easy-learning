@@ -1,5 +1,6 @@
 package com.example.easy_learning.mapper;
 
+import com.example.easy_learning.dto.RegisterDto;
 import com.example.easy_learning.dto.TutorNRDto;
 import com.example.easy_learning.dto.TutorRDto;
 import com.example.easy_learning.model.Tutor;
@@ -15,7 +16,6 @@ public interface TutorMapper {
   TutorRDto toRDto(Tutor tutor); // <-- этот нужен в контроллере
   Tutor toEntity(TutorRDto tutorRDto); // <-- для обратного преобразования
 
-
   @Mapping(target = "personalInfo", source = "personalInfo")
   TutorNRDto toNRDto(Tutor tutor);
   TutorRDto toRDto(TutorNRDto tutorNRDto);
@@ -24,4 +24,6 @@ public interface TutorMapper {
 
   Set<TutorNRDto> toNRDtos(Set<Tutor> tutors);
   Set<TutorRDto> toRDtos(Set<TutorNRDto> tutorNRDtoss);
+
+  Tutor toTutor(RegisterDto registerDto);
 }
