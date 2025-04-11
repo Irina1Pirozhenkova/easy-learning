@@ -8,4 +8,6 @@ public class TutorNRDto {
   private Integer id;
 
   private TutorPersonalInfoDto personalInfo;
+
+  private String password;
 }

@@ -26,6 +26,9 @@ public class Tutor {
     @Column(name = "password", nullable = false)
     private String password;
 
+    @Column(name = "email", unique = true)
+    private String email;
+
     @OneToMany(mappedBy = "tutor", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Task> tasks = new HashSet<>();
 

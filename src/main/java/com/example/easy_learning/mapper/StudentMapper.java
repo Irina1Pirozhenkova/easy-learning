@@ -1,5 +1,6 @@
 package com.example.easy_learning.mapper;
 
+import com.example.easy_learning.dto.RegisterDto;
 import com.example.easy_learning.dto.StudentNRDto;
 import com.example.easy_learning.dto.StudentRDto;
 import com.example.easy_learning.model.Student;
@@ -22,4 +23,6 @@ public interface StudentMapper {
 
   List<StudentNRDto> toNRDtos(List<Student> students);
   List<StudentRDto> toRDtos(List<StudentNRDto> studentNRDtoss);
+
+  Student toEntity(RegisterDto registerDto);
 }
