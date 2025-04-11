@@ -12,6 +12,9 @@ import java.util.Set;
 public interface TutorMapper {
 
   Tutor toNREntity(TutorNRDto tutorNRDto);
+  TutorRDto toRDto(Tutor tutor); // <-- этот нужен в контроллере
+  Tutor toEntity(TutorRDto tutorRDto); // <-- для обратного преобразования
+
 
   @Mapping(target = "personalInfo", source = "personalInfo")
   TutorNRDto toNRDto(Tutor tutor);

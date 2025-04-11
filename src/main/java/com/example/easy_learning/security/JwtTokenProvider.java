@@ -96,7 +96,7 @@ public class JwtTokenProvider {
             throw new RuntimeException("Invalid refresh token");
         }
         Long tutorId = Long.valueOf(getId(refreshToken));
-        Tutor tutor = tutorService.getTutorById(tutorId.intValue());
+        Tutor tutor = tutorService.getById(tutorId.intValue());
 
         JwtResponse jwtResponse = new JwtResponse();
         jwtResponse.setId(tutor.getId().longValue());
