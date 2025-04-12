@@ -9,6 +9,8 @@ services:
       - photo:/app/uploads
     depends_on:
       - mysql
+    environment:
+      - JWT_SECRET=${JWT_SECRET}  # <--- добавили эту строку!
 
   mysql:
     image: mysql:8.0

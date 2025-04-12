@@ -16,8 +16,6 @@ public class TutorPersonalInfoDto {
 
   private LocalDate birthdate;
 
-  private String email;
-
   private String phone;
 
   private String telegram;

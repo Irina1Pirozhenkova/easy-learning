@@ -17,8 +17,6 @@ public class StudentPersonalInfoDto {
 
   private String subject;
 
-  private String email;
-
   private String phone;
 
   private String telegram;

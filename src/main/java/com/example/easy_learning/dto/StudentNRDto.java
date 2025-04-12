@@ -9,6 +9,8 @@ public class StudentNRDto {
 
   private String password;
 
+  private String email;
+
   private StudentPersonalInfoDto studentPersonalInfo;
 }
 

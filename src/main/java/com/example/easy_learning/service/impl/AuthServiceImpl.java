@@ -27,7 +27,7 @@ public class AuthServiceImpl implements AuthService {
         // Аутентификация
         var auth = new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword());
 
-        authenticationManager.authenticate(
+        authenticationManager.authenticate( //вызывает StudentJwtUserDetailsService.loadUserByUsername(...)
                 new UsernamePasswordAuthenticationToken(
                         loginRequest.getUsername(), loginRequest.getPassword()
                 )
@@ -36,7 +36,7 @@ public class AuthServiceImpl implements AuthService {
         // Попробуем сначала как студент
         try {
             Student student = studentService.getByEmail(loginRequest.getUsername());
-            return buildStudentTokens(student);
+            return buildStudentTokens(student); //JwtTokenProvider
         } catch (RuntimeException e) {
             // Если студент не найден — пробуем репетитора
             Tutor tutor = tutorService.getByEmail(loginRequest.getUsername());
@@ -55,7 +55,7 @@ public class AuthServiceImpl implements AuthService {
             throw new RuntimeException("Invalid user type");
         }
     }
-
+    // Это просто "сборка" ответа: в него кладутся токены + id + email
     private JwtResponse buildStudentTokens(Student student) {
         JwtResponse jwtResponse = new JwtResponse();
         jwtResponse.setId(student.getId().longValue());

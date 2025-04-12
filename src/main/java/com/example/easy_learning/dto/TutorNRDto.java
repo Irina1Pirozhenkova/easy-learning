@@ -9,5 +9,7 @@ public class TutorNRDto {
 
   private TutorPersonalInfoDto personalInfo;
 
+  private String email;
+
   private String password;
 }

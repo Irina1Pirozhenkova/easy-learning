@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 public class StudentJwtUserDetailsService implements UserDetailsService {
 
     private final StudentService studentService;
-
+    //ищет пользователя по email через StudentService
     @Override
     public UserDetails loadUserByUsername(final String email) throws UsernameNotFoundException {
         Student student = studentService.getByEmail(email);

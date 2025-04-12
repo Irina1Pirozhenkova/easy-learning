@@ -24,20 +24,20 @@ public class StudentJwtEntity implements UserDetails {
     @Override
     public boolean isAccountNonExpired() {
         return true;
-    }
+    }//У пользователя не просрочен аккаунт
 
     @Override
     public boolean isAccountNonLocked() {
         return true;
-    }
+    }//Не заблокирован
 
     @Override
     public boolean isCredentialsNonExpired() {
         return true;
-    }
+    }//Пароль не истёк
 
     @Override
     public boolean isEnabled() {
         return true;
-    }
+    }//И он активен
 }

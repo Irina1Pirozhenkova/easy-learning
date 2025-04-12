@@ -25,20 +25,21 @@ public class JwtTokenFilter extends GenericFilterBean {
                          FilterChain filterChain) throws IOException, ServletException {
 
         String bearerToken = ((HttpServletRequest) servletRequest).getHeader("Authorization");
-        if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
+        if (bearerToken != null && bearerToken.startsWith("Bearer ")) {//Получаем заголовок Authorization
             bearerToken = bearerToken.substring(7);
         }
 
-        try {
-            if (bearerToken != null && jwtTokenProvider.isValid(bearerToken)) {
+        try {//Получаем объект Authentication, в котором содержится пользователь,
+            if (bearerToken != null && jwtTokenProvider.isValid(bearerToken)) { //Проверяем: токен есть и он валидный
                 Authentication authentication = jwtTokenProvider.getAuthentication(bearerToken);
                 if (authentication != null) {
                     SecurityContextHolder.getContext().setAuthentication(authentication);
-                }
+                }//Вставляем Authentication в контекст безопасности, чтобы Spring знал: "этот пользователь авторизован"
             }
         } catch (Exception ignored) {
         }
 
         filterChain.doFilter(servletRequest, servletResponse);
+        //Передаём управление дальше — другим фильтрам, контроллерам и т.д.
     }
 }

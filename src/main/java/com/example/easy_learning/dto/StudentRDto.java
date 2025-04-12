@@ -14,6 +14,8 @@ public class StudentRDto {
 
   private StudentPersonalInfoDto studentPersonalInfo;
 
+  private String email;
+
   private Set<StudentsHomeworkHDto> homeworks;
 
   private Set<StudentsTutorsTDto> tutors;

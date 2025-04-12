@@ -39,7 +39,7 @@ public class JwtTokenProvider {
     public void init() {
         this.key = Keys.hmacShaKeyFor(jwtProperties.getSecret().getBytes());
     }
-
+    //мы генерируем секретный ключ из строки в application.yml
     public String createAccessToken(Long userId, String username, String userType) {
         Instant now = Instant.now();
         Instant expiry = now.plus(jwtProperties.getAccess(), ChronoUnit.HOURS);
@@ -50,7 +50,7 @@ public class JwtTokenProvider {
                 .claim("userType", userType)
                 .setIssuedAt(Date.from(now))
                 .setExpiration(Date.from(expiry))
-                .signWith(key, SignatureAlgorithm.HS256)
+                .signWith(key, SignatureAlgorithm.HS256)//подпись (signWith) с нашим секретом
                 .compact();
     }
 
@@ -168,13 +168,13 @@ public class JwtTokenProvider {
         }
     }
 
-    public Authentication getAuthenticationForStudent(String token) {
+    public Authentication getAuthenticationForStudent(String token) {// Кто сделал запрос?
         String username = getUsername(token);
         UserDetails userDetails = studentJwtUserDetailsService.loadUserByUsername(username);
         return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
     }
 
-    public Authentication getAuthenticationForTutor(String token) {
+    public Authentication getAuthenticationForTutor(String token) {// Кто сделал запрос?
         String username = getUsername(token);
         UserDetails userDetails = tutorJwtUserDetailsService.loadUserByUsername(username);
         return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());

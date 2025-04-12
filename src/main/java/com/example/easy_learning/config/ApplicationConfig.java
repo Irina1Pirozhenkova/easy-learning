@@ -6,6 +6,7 @@ import com.example.easy_learning.security.StudentJwtUserDetailsService;
 import com.example.easy_learning.security.TutorJwtUserDetailsService;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+import org.springframework.http.HttpMethod;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -34,13 +35,13 @@ public class ApplicationConfig {
   private final TutorJwtUserDetailsService tutorJwtUserDetailsService;
 
   // Можно использовать один PasswordEncoder для обоих провайдеров
-  @Bean
+  @Bean //Для хеширования и проверки паролей
   public PasswordEncoder passwordEncoder() { // хэширование паролей
     return new BCryptPasswordEncoder();
   }
 
   // Создаём DaoAuthenticationProvider для студентов
-  @Bean
+  @Bean//Подключает UserDetailsService для логина
   public DaoAuthenticationProvider studentDaoAuthenticationProvider() {
     DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
     provider.setUserDetailsService(studentJwtUserDetailsService);
@@ -49,7 +50,7 @@ public class ApplicationConfig {
   }
 
   // Создаём DaoAuthenticationProvider для репетиторов
-  @Bean
+  @Bean//Подключает UserDetailsService для логина
   public DaoAuthenticationProvider tutorDaoAuthenticationProvider() {
     DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
     provider.setUserDetailsService(tutorJwtUserDetailsService);
@@ -59,7 +60,7 @@ public class ApplicationConfig {
 
   // Регистрируем оба провайдера в AuthenticationManager
   @Bean
-  @SneakyThrows
+  @SneakyThrows//Проверяет логин/пароль
   public AuthenticationManager authenticationManager(HttpSecurity http) {
     AuthenticationManagerBuilder authBuilder = http.getSharedObject(AuthenticationManagerBuilder.class);
     authBuilder.authenticationProvider(studentDaoAuthenticationProvider());
@@ -69,7 +70,7 @@ public class ApplicationConfig {
 
   // Конфигурация фильтров и остальных настроек безопасности
   @Bean
-  @SneakyThrows
+  @SneakyThrows//Главное: говорит, кто куда может, и подключает JwtTokenFilter
   public SecurityFilterChain filterChain(HttpSecurity httpSecurity) {
     httpSecurity
             .csrf(AbstractHttpConfigurer::disable)
@@ -79,28 +80,29 @@ public class ApplicationConfig {
                     sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             )
             .exceptionHandling(configurer ->
-                    configurer.authenticationEntryPoint(
+                    configurer.authenticationEntryPoint( // если не авторизован
                             (request, response, exception) -> {
                               response.setStatus(HttpStatus.UNAUTHORIZED.value()); // 401
                               response.getWriter().write("Unauthorized.");
                             }
-                    ).accessDeniedHandler(
+                    ).accessDeniedHandler( // если нет прав
                             (request, response, exception) -> {
-                              response.setStatus(HttpStatus.FORBIDDEN.value());
+                              response.setStatus(HttpStatus.FORBIDDEN.value()); //403
                               response.getWriter().write("Unauthorized.");
                             }
                     )
-            )
+            ) //Swagger и OpenAPI — доступны без авторизации всё остальное — только с валидным токеном
             .authorizeHttpRequests(configurer ->
                     configurer
                             .requestMatchers("/api/v1/auth/**").permitAll()
+                            .requestMatchers(HttpMethod.POST, "/api/tutors").permitAll() // 👈 разрешаем создание тьютора без токена
                             .requestMatchers("/swagger-ui/**").permitAll()
                             .requestMatchers("/v3/api-docs/**").permitAll()
                             .anyRequest().authenticated()
             )
-            .anonymous(AbstractHttpConfigurer::disable)
+            .anonymous(AbstractHttpConfigurer::disable) //Отключаем анонимный доступ
             .addFilterBefore(new JwtTokenFilter(tokenProvider), UsernamePasswordAuthenticationFilter.class);
-
+//Добавляем JWT-фильтр
     return httpSecurity.build();
   }
 }

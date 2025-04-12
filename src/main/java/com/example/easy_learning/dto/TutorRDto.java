@@ -21,5 +21,7 @@ public class TutorRDto {
 
   private Set<HomeworkNRDto> homeworks;
 
+  private String email;
+
   private Set<StudentNRDto> students;
 }
