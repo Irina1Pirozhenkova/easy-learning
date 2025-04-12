@@ -178,107 +178,47 @@ https://docs.google.com/document/d/1odeRMj0IMw941y2SPaJtfBGpDKGm13SqU9hXOAfoywI/
 #### Проверка работы аутентификации через Postman
 
 ##### 1. Регистрация тьютора
-URL: POST http://localhost:8080/api/v1/auth/register/tutor
-Body (JSON):
-{
-  "email": "tutor1@mail.ru",
-  "password": "12345"
-}
-Response (201 Created):
-{
-  "email": "tutor1@mail.ru",
-  "password": "$2a$10$...",
-  "userType": "tutor"
-}
+- URL: POST http://localhost:8080/api/v1/auth/register/tutor
+- Body (JSON):{ "email": "tutor1@mail.ru", "password": "12345"}
+- Response (201 Created): { "email": "tutor1@mail.ru",  "password": "$2a$10$...","userType": "tutor"}
 ##### 2. Логин тьютора
-URL: POST http://localhost:8080/api/v1/auth/login
-Body (JSON):
-{
-  "username": "tutor1@mail.ru",
-  "password": "12345"
-}
-Response (200 OK):
-{
-  "id": 3,
-  "username": "tutor1@mail.ru",
-  "accessToken": "...",
-  "refreshToken": "..."
-}
+- URL: POST http://localhost:8080/api/v1/auth/login
+- Body (JSON):{"username": "tutor1@mail.ru",  "password": "12345"}
+- Response (200 OK):{ "id": 3, "username": "tutor1@mail.ru", "accessToken": "...", "refreshToken": "..."}
 ##### 3. Получение одного тьютора
-URL: GET http://localhost:8080/api/tutor/3
-Headers:
-Authorization: Bearer {accessToken}
-Response (200 OK):
-{
-  "id": 3,
-  "email": "tutor1@mail.ru",
-  "tasks": [...],
-  "homeworks": [...]
-}
+- URL: GET http://localhost:8080/api/tutor/3
+- Authorization: Bearer {accessToken}
+- Response (200 OK):{"id": 3,"email": "tutor1@mail.ru","tasks": [...], "homeworks": [...]}
 ##### 4. Получение всех тьюторов
-URL: GET http://localhost:8080/api/tutor
-Headers:
-Authorization: Bearer {accessToken}
-Response (200 OK) — если авторизован тьютор
-Response (403 Forbidden) — если студент
+- URL: GET http://localhost:8080/api/tutor
+- Authorization: Bearer {accessToken}
+- Response (200 OK) — если авторизован тьютор
+- Response (403 Forbidden) — если студент
 ##### 5. Регистрация тьютором студента
-URL: POST http://localhost:8080/api/students
-Headers:
-Authorization: Bearer {accessToken} (только тьютор)
-Body (JSON):
-{
-  "email": "student1@mail.ru",
-  "password": "12345"
-}
-Response (201 Created):
-{
-  "id": 4,
-  "email": "student1@mail.ru",
-  "password": null
-}
+- URL: POST http://localhost:8080/api/students
+- Authorization: Bearer {accessToken} (только тьютор)
+- Body (JSON):{  "email": "student1@mail.ru",  "password": "12345"}
+- Response (201 Created):{  "id": 4,  "email": "student1@mail.ru", "password": null}
 ##### 6. Логин студента
-URL: POST http://localhost:8080/api/v1/auth/login
-Body (JSON):
-{
-  "username": "student1@mail.ru",
-  "password": "12345"
-}
-Response (200 OK):
-{
-  "id": 4,
-  "username": "student1@mail.ru",
-  "accessToken": "...",
-  "refreshToken": "..."
-}
+- URL: POST http://localhost:8080/api/v1/auth/login
+- Body (JSON):{  "username": "student1@mail.ru",  "password": "12345"}
+- Response (200 OK):{  "id": 4,  "username": "student1@mail.ru",  "accessToken": "...",  "refreshToken": "..."}
 ##### 7. Получение информации о себе (студент)
-URL: GET http://localhost:8080/api/students/4?full=true
-Headers:
-Authorization: Bearer {accessToken}
-Response (200 OK):
-{
-  "id": 4,
-  "email": "student1@mail.ru",
-  "homeworks": [...],
-  "tutors": [...]
-}
-Response (403 Forbidden) — если пытается получить чужие данные
+- URL: GET http://localhost:8080/api/students/4?full=true
+- Authorization: Bearer {accessToken}
+- Response (200 OK):{ "id": 4,"email": "student1@mail.ru",  "homeworks": [...], "tutors": [...]}
+- Response (403 Forbidden) — если пытается получить чужие данные
 ##### 8. Получение всех студентов
-URL: GET http://localhost:8080/api/students
-Headers:
-Authorization: Bearer {accessToken} (только тьютор)
-Response (200 OK) — если тьютор
-Response (403 Forbidden) — если студент
+- URL: GET http://localhost:8080/api/students
+- Authorization: Bearer {accessToken} (только тьютор)
+- Response (200 OK) — если тьютор
+- Response (403 Forbidden) — если студент
 ##### 9. Обновление студента (изменение пароля)
-URL: PUT http://localhost:8080/api/students/4
-Headers:
-Authorization: Bearer {accessToken}
-Body (JSON):
-{
-  "password": "новыйПароль123",
-  "studentPersonalInfo": { ... }
-}
-Response (200 OK) — если обновляет сам себя
-Response (403 Forbidden) — если другой пользователь
+- URL: PUT http://localhost:8080/api/students/4
+- Authorization: Bearer {accessToken}
+- Body (JSON):{ "password": "новыйПароль123",  "studentPersonalInfo": { ... }}
+- Response (200 OK) — если обновляет сам себя
+- Response (403 Forbidden) — если другой пользователь
 
 #### Описание модели пользователя и JWT-аутентификации
 
