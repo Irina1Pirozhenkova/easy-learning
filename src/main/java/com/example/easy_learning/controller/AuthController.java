@@ -1,9 +1,9 @@
 package com.example.easy_learning.controller;
-
 import com.example.easy_learning.dto.RegisterDto;
 import com.example.easy_learning.dto.RegisterResponse;
 import com.example.easy_learning.dto.auth.JwtRequest;
 import com.example.easy_learning.dto.JwtResponse;
+import com.example.easy_learning.dto.auth.RefreshRequest;
 import com.example.easy_learning.mapper.StudentMapper;
 import com.example.easy_learning.mapper.TutorMapper;
 import com.example.easy_learning.model.Student;
@@ -13,6 +13,8 @@ import com.example.easy_learning.service.StudentService;
 import com.example.easy_learning.service.TutorService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -30,6 +32,7 @@ public class AuthController {
     private final TutorMapper tutorMapper;
     private final StudentService studentService;
     private final TutorService tutorService;
+    private final Logger log = LoggerFactory.getLogger(AuthController.class);
 
     @PostMapping("/login")
     public JwtResponse login(@RequestBody @Validated JwtRequest loginRequest) {
@@ -52,7 +55,8 @@ public class AuthController {
     }
 
     @PostMapping("/refresh")
-    public JwtResponse refresh(@RequestBody String refreshToken) {
-        return authService.refresh(refreshToken);
+    public JwtResponse refresh(@RequestBody RefreshRequest refReq) {
+        log.info("Refresh token: {}", refReq);
+        return authService.refresh(refReq.getRefreshToken());
     }
 }

@@ -72,7 +72,7 @@ public class JwtTokenProvider {
         if (!isValid(refreshToken)) {
             throw new RuntimeException("Invalid refresh token");
         }
-        Long studentId = Long.valueOf(getId(refreshToken));
+        Long studentId = getId(refreshToken);
         Student student = studentService.getStudentById(studentId.intValue());
 
         JwtResponse jwtResponse = new JwtResponse();
@@ -95,7 +95,7 @@ public class JwtTokenProvider {
         if (!isValid(refreshToken)) {
             throw new RuntimeException("Invalid refresh token");
         }
-        Long tutorId = Long.valueOf(getId(refreshToken));
+        Long tutorId = getId(refreshToken);
         Tutor tutor = tutorService.getById(tutorId.intValue());
 
         JwtResponse jwtResponse = new JwtResponse();
@@ -127,14 +127,15 @@ public class JwtTokenProvider {
         }
     }
 
-    private String getId(final String token) {
-        return Jwts
-                .parserBuilder()
+    private Long getId(final String token) {
+        Integer id =  Jwts.parserBuilder()
                 .setSigningKey(key)
                 .build()
                 .parseClaimsJws(token)
                 .getBody()
-                .get("id", String.class);
+                .get("id", Integer.class);
+
+        return id.longValue();
     }
 
     private String getUsername(String token) {
