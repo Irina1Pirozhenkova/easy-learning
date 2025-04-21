@@ -1,0 +1,30 @@
+<!-- src/main/resources/templates/register.html -->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Регистрация</title>
+    <link rel="stylesheet" th:href="@{/css/main.css}"/>
+</head>
+<body>
+<section th:fragment="registerForm">
+    <h2>
+        Регистрация
+        <span th:text="${userType == 'student' ? 'студента' : 'репетитора'}"></span>
+    </h2>
+    <form
+            th:action="@{/api/v1/auth/register/{userType}(userType=${userType})}"
+            method="post">
+        <label>Email:</label>
+        <input type="email" name="email" required/>
+        <label>Пароль:</label>
+        <input type="password" name="password" required/>
+        <button type="submit"
+                th:text="${userType == 'student' ? 'Зарегистрироваться как студент'
+                                               : 'Зарегистрироваться как репетитор'}">
+            Зарегистрироваться
+        </button>
+    </form>
+</section>
+</body>
+</html>

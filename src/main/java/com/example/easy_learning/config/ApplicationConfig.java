@@ -92,15 +92,19 @@ public class ApplicationConfig {
                             }
                     )
             ) //Swagger и OpenAPI — доступны без авторизации всё остальное — только с валидным токеном
-            .authorizeHttpRequests(configurer ->
-                    configurer
-                            .requestMatchers("/api/v1/auth/**").permitAll()
-                            .requestMatchers(HttpMethod.POST, "/api/tutors").permitAll() // 👈 разрешаем создание тьютора без токена
-                            .requestMatchers("/swagger-ui/**").permitAll()
-                            .requestMatchers("/v3/api-docs/**").permitAll()
-                            .anyRequest().authenticated()
+            .authorizeHttpRequests(auth -> auth
+                    // REST‑API
+                    .requestMatchers("/api/v1/auth/**").permitAll()
+                    // формы логина/регистрации
+                    .requestMatchers("/login", "/login-page", "/register/**").permitAll()
+                    // статика
+                    .requestMatchers("/css/**", "/js/**", "/images/**", "/favicon.ico").permitAll()
+                    // Swagger если нужно
+                    .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
+                    // всё остальное — с токеном
+                    .anyRequest().authenticated()
             )
-            .anonymous(AbstractHttpConfigurer::disable) //Отключаем анонимный доступ
+
             .addFilterBefore(new JwtTokenFilter(tokenProvider), UsernamePasswordAuthenticationFilter.class);
 //Добавляем JWT-фильтр
     return httpSecurity.build();
