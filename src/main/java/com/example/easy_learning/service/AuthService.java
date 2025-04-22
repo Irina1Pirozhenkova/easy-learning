@@ -1,7 +1,7 @@
 package com.example.easy_learning.service;
 
 import com.example.easy_learning.dto.auth.JwtRequest;
-import com.example.easy_learning.dto.JwtResponse;
+import com.example.easy_learning.dto.auth.JwtResponse;
 import org.springframework.stereotype.Service;
 
 

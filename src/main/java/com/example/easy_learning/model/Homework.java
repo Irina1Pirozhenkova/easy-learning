@@ -18,11 +18,13 @@ public class Homework {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "class", nullable = false)
-    private String className; // Используем "className" вместо "class"
+    private ClassLevel className; // Используем "className" вместо "class"
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "subject", nullable = false)
-    private String subject;
+    private Subject subject;
 
     @Column(name = "topic", nullable = false)
     private String topic;
@@ -32,7 +34,7 @@ public class Homework {
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "tutor_id")
-    private Tutor tutor;
+    private User tutor;
 
     @OneToMany(mappedBy = "homework", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<StudentsHomework> students = new HashSet<>();

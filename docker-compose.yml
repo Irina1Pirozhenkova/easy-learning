@@ -1,20 +1,19 @@
 services:
   app:
-    build: .
-    image: easy_learning_app
+    image: easy_learning_app:0.0.1-SNAPSHOT  # тот же тег, что в build.gradle
     container_name: easy_learning_app
+    depends_on:
+      mysql:
+        condition: service_healthy
+    env_file:
+      - .env
     ports:
       - "8080:8080"
     volumes:
       - photo:/app/uploads
-    depends_on:
-      - mysql
-    environment:
-      - JWT_SECRET=${JWT_SECRET}  # <--- добавили эту строку!
 
   mysql:
     image: mysql:8.0
-    container_name: mysql
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: 12345
@@ -23,7 +22,12 @@ services:
       - "2020:3306"
     volumes:
       - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-p12345"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
 volumes:
-  mysql_data:
   photo:
+  mysql_data:

@@ -12,15 +12,15 @@ import java.util.Set;
 @Mapper(componentModel = "spring")
 public interface HomeworkMapper {
 
-  Homework toNREntity(HomeworkNRDto homeworkNRDto);
-
-  HomeworkNRDto toNRDto(Homework homework);
-
-  HomeworkRDto toRDto(HomeworkNRDto homeworkNRDto);
-  HomeworkNRDto toNRDto(HomeworkRDto homeworkRDto);
-
-  List<Homework> toNREntities(List<HomeworkNRDto> homeworkNRDtos);
-
-  Set<HomeworkNRDto> toNRDtos(Set<Homework> homeworks);
-  List<HomeworkRDto> toRDtos(List<HomeworkNRDto> homeworkNRDtoss);
+//  Homework toNREntity(HomeworkNRDto homeworkNRDto);
+//
+//  HomeworkNRDto toNRDto(Homework homework);
+//
+//  HomeworkRDto toRDto(HomeworkNRDto homeworkNRDto);
+//  HomeworkNRDto toNRDto(HomeworkRDto homeworkRDto);
+//
+//  List<Homework> toNREntities(List<HomeworkNRDto> homeworkNRDtos);
+//
+//  Set<HomeworkNRDto> toNRDtos(Set<Homework> homeworks);
+//  List<HomeworkRDto> toRDtos(List<HomeworkNRDto> homeworkNRDtoss);
 }

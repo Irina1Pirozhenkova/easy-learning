@@ -1,62 +1,38 @@
 package com.example.easy_learning.controller;
-import com.example.easy_learning.dto.RegisterDto;
-import com.example.easy_learning.dto.RegisterResponse;
+
 import com.example.easy_learning.dto.auth.JwtRequest;
-import com.example.easy_learning.dto.JwtResponse;
-import com.example.easy_learning.dto.auth.RefreshRequest;
-import com.example.easy_learning.mapper.StudentMapper;
-import com.example.easy_learning.mapper.TutorMapper;
-import com.example.easy_learning.model.Student;
-import com.example.easy_learning.model.Tutor;
+import com.example.easy_learning.dto.RegisterDto;
+import com.example.easy_learning.dto.auth.JwtResponse;
+import com.example.easy_learning.model.Role;
+import com.example.easy_learning.model.User;
 import com.example.easy_learning.service.AuthService;
-import com.example.easy_learning.service.StudentService;
-import com.example.easy_learning.service.TutorService;
-import io.swagger.v3.oas.annotations.tags.Tag;
+import com.example.easy_learning.service.UserService;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ResourceBundle;
-
 @RestController
 @RequestMapping("/api/v1/auth")
 @RequiredArgsConstructor
-@Tag(name = "Auth Controller", description = "Authentication endpoints")
 public class AuthController {
+  private final AuthService authService;
+  private final UserService userService;
 
-    private final AuthService authService;
-    private final StudentMapper studentMapper;
-    private final TutorMapper tutorMapper;
-    private final StudentService studentService;
-    private final TutorService tutorService;
-    private final Logger log = LoggerFactory.getLogger(AuthController.class);
+  @PostMapping("/login")
+  public JwtResponse login(@RequestBody @Validated JwtRequest req) {
+    return authService.login(req);
+  }
 
-    @PostMapping("/login")
-    public JwtResponse login(@RequestBody @Validated JwtRequest loginRequest) {
-        return authService.login(loginRequest);
+  @PostMapping("/register")
+  public ResponseEntity<User> register(@RequestBody RegisterDto dto) {
+    User user = new User();
+    user.setEmail(dto.getEmail());
+    user.setPassword(dto.getPassword());
+    if (dto.isTutor()) {
+      user.getRoles().add(Role.TUTOR);
     }
-
-    @PostMapping("/register/{user-type}")
-    public ResponseEntity<?> register(@PathVariable("user-type") String userType, @RequestBody RegisterDto registerDto) {
-        if ("student".equals(userType)) {
-            Student student = studentMapper.toEntity(registerDto);
-            Student created = studentService.createStudent(student);
-            return ResponseEntity.ok(RegisterResponse.builder().email(created.getEmail()).password(created.getPassword()).userType(userType).build());
-        }
-        if ("tutor".equals(userType)) {
-            Tutor tutor = tutorMapper.toTutor(registerDto);
-            Tutor created = tutorService.create(tutor);
-            return ResponseEntity.ok(RegisterResponse.builder().email(created.getEmail()).password(created.getPassword()).userType(userType).build());
-        }
-        return ResponseEntity.badRequest().body("Нельзя создать пользователя с таким user type");
-    }
-
-    @PostMapping("/refresh")
-    public JwtResponse refresh(@RequestBody RefreshRequest refReq) {
-        log.info("Refresh token: {}", refReq);
-        return authService.refresh(refReq.getRefreshToken());
-    }
+    user.getRoles().add(Role.STUDENT);
+    return ResponseEntity.ok(userService.create(user));
+  }
 }

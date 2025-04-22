@@ -11,15 +11,15 @@ import java.util.Set;
 @Mapper(componentModel = "spring")
 public interface TaskMapper {
 
-  @Mapping(target = "tutor.id", source = "tutorId")
-  Task toNREntity(TaskNRDto taskNRDto);
-
-  @Mapping(target = "tutorId", source = "tutor.id")
-  TaskNRDto toNRDto(Task task);
-  TaskRDto toRDto(TaskNRDto taskNRDto);
-
-  Set<Task> toNREntities(Set<TaskNRDto> taskNRDtos);
-
-  Set<TaskNRDto> toNRDtos(Set<Task> tasks);
-  Set<TaskRDto> toRDtos(Set<TaskNRDto> taskNRDtoss);
+//  @Mapping(target = "tutor.id", source = "tutorId")
+//  Task toNREntity(TaskNRDto taskNRDto);
+//
+//  @Mapping(target = "tutorId", source = "tutor.id")
+//  TaskNRDto toNRDto(Task task);
+//  TaskRDto toRDto(TaskNRDto taskNRDto);
+//
+//  Set<Task> toNREntities(Set<TaskNRDto> taskNRDtos);
+//
+//  Set<TaskNRDto> toNRDtos(Set<Task> tasks);
+//  Set<TaskRDto> toRDtos(Set<TaskNRDto> taskNRDtoss);
 }

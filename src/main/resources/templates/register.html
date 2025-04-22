@@ -1,30 +1,21 @@
-<!-- src/main/resources/templates/register.html -->
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8"/>
-    <title>Регистрация</title>
-    <link rel="stylesheet" th:href="@{/css/main.css}"/>
-</head>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head><title th:text="'Регистрация'"></title></head>
 <body>
-<section th:fragment="registerForm">
-    <h2>
-        Регистрация
-        <span th:text="${userType == 'student' ? 'студента' : 'репетитора'}"></span>
-    </h2>
-    <form
-            th:action="@{/api/v1/auth/register/{userType}(userType=${userType})}"
-            method="post">
-        <label>Email:</label>
-        <input type="email" name="email" required/>
-        <label>Пароль:</label>
-        <input type="password" name="password" required/>
-        <button type="submit"
-                th:text="${userType == 'student' ? 'Зарегистрироваться как студент'
-                                               : 'Зарегистрироваться как репетитор'}">
-            Зарегистрироваться
-        </button>
+<section layout:fragment="content">
+    <h2 class="mb-3">Регистрация</h2>
+    <form id="registerForm" method="post" class="vstack gap-2 col-md-4 mx-auto">
+        <input class="form-control" type="email"   name="email"    placeholder="Email" required>
+        <input class="form-control" type="password" name="password" placeholder="Пароль" required>
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" name="tutor" id="tutorChk">
+          <label class="form-check-label" for="tutorChk">Я репетитор</label>
+        </div>
+        <button class="btn btn-success" type="submit">Зарегистрироваться</button>
     </form>
+    <p class="mt-3 text-center"><a th:href="@{/login}">Уже есть аккаунт? Войти</a></p>
 </section>
 </body>
 </html>

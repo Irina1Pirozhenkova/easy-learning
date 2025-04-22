@@ -16,18 +16,18 @@ public class StudentsTutors {
 
   @ManyToOne
   @JoinColumn(name = "student_id")
-  private Student student;
+  private User student;
 
   @ManyToOne
   @JoinColumn(name = "tutor_id")
-  private Tutor tutor;
+  private User tutor;
 
-  public void setStudent(Student student) {
+  public void setStudent(User student) {
     this.student = student;
     if (student != null && student.getTutors() != null) student.getTutors().add(this);
   }
 
-  public void setTutor(Tutor tutor) {
+  public void setTutor(User tutor) {
     this.tutor = tutor;
     if (tutor != null && tutor.getStudents() != null) tutor.getStudents().add(this);
   }

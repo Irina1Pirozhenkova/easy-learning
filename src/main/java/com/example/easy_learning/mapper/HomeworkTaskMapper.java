@@ -10,12 +10,12 @@ import java.util.Set;
 
 @Mapper(componentModel = "spring", uses = {HomeworkMapper.class, TaskMapper.class})
 public interface HomeworkTaskMapper {
-  HomeworkTaskHDto toHDto(HomeworkTask homeworkTask);
-  HomeworkTaskTDto toTDto(HomeworkTask homeworkTask);
-
-  Set<HomeworkTaskHDto> toHDtos(Set<HomeworkTask> homeworkTasks);
-  Set<HomeworkTaskTDto> toTDtos(Set<HomeworkTask> homeworkTasks);
-
-  Set<HomeworkTask> toEntitiesFromHDtos(Set<HomeworkTaskHDto> homeworkTaskHDtos);
-  Set<HomeworkTask> toEntitiesFromTDtos(Set<HomeworkTaskTDto> homeworkTaskTDtos);
+//  HomeworkTaskHDto toHDto(HomeworkTask homeworkTask);
+//  HomeworkTaskTDto toTDto(HomeworkTask homeworkTask);
+//
+//  Set<HomeworkTaskHDto> toHDtos(Set<HomeworkTask> homeworkTasks);
+//  Set<HomeworkTaskTDto> toTDtos(Set<HomeworkTask> homeworkTasks);
+//
+//  Set<HomeworkTask> toEntitiesFromHDtos(Set<HomeworkTaskHDto> homeworkTaskHDtos);
+//  Set<HomeworkTask> toEntitiesFromTDtos(Set<HomeworkTaskTDto> homeworkTaskTDtos);
 }

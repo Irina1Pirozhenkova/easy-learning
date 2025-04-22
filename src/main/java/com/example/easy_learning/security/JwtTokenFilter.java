@@ -9,10 +9,12 @@ import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Component;
 import org.springframework.web.filter.GenericFilterBean;
 
 import java.io.IOException;
 
+@Component
 @RequiredArgsConstructor
 public class JwtTokenFilter extends GenericFilterBean {
 
@@ -30,7 +32,7 @@ public class JwtTokenFilter extends GenericFilterBean {
         }
 
         try {//Получаем объект Authentication, в котором содержится пользователь,
-            if (bearerToken != null && jwtTokenProvider.isValid(bearerToken)) { //Проверяем: токен есть и он валидный
+            if (bearerToken != null && jwtTokenProvider.validate(bearerToken)) { //Проверяем: токен есть и он валидный
                 Authentication authentication = jwtTokenProvider.getAuthentication(bearerToken);
                 if (authentication != null) {
                     SecurityContextHolder.getContext().setAuthentication(authentication);

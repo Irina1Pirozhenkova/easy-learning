@@ -16,7 +16,7 @@ public class StudentsHomework {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "student_id")
-    private Student student;
+    private User student;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "homework_id")
@@ -28,9 +28,9 @@ public class StudentsHomework {
 
     private Integer score;
 
-    public void setStudent(Student student) {
+    public void setStudent(User student) {
         this.student = student;
-        if (student != null && student.getHomeworks() != null) student.getHomeworks().add(this);
+        if (student != null && student.getHomeworks() != null) student.getStudentHomeworks().add(this);
     }
 
     public void setHomework(Homework homework) {

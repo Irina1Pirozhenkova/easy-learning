@@ -9,12 +9,12 @@ import java.util.Set;
 
 @Mapper(componentModel = "spring", uses = {StudentMapper.class, TutorMapper.class})
 public interface StudentsTutorsMapper {
-  StudentsTutorsSDto toSDto(StudentsTutors studentsTutors);
-  StudentsTutorsTDto toTDto(StudentsTutors studentsTutors);
-
-  Set<StudentsTutorsTDto> toTDtoSet(Set<StudentsTutors> studentsTutorsSet);
-  Set<StudentsTutorsSDto> toSDtoSet(Set<StudentsTutors> studentsTutorsSet);
-
-  Set<StudentsTutors> toEntitiesFromTDto(Set<StudentsTutorsTDto> studentsTutorsSet);
-  Set<StudentsTutors> toEntitiesFromSDto(Set<StudentsTutorsSDto> studentsTutorsSet);
+//  StudentsTutorsSDto toSDto(StudentsTutors studentsTutors);
+//  StudentsTutorsTDto toTDto(StudentsTutors studentsTutors);
+//
+//  Set<StudentsTutorsTDto> toTDtoSet(Set<StudentsTutors> studentsTutorsSet);
+//  Set<StudentsTutorsSDto> toSDtoSet(Set<StudentsTutors> studentsTutorsSet);
+//
+//  Set<StudentsTutors> toEntitiesFromTDto(Set<StudentsTutorsTDto> studentsTutorsSet);
+//  Set<StudentsTutors> toEntitiesFromSDto(Set<StudentsTutorsSDto> studentsTutorsSet);
 }
