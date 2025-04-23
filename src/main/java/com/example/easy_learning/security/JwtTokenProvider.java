@@ -22,6 +22,7 @@ import java.util.Date;
 public class JwtTokenProvider {
     private final JwtProperties props;
     private SecretKey key;
+    private final UserDetailsService userDetailsService;
 
     @PostConstruct
     public void init() {
@@ -66,8 +67,7 @@ public class JwtTokenProvider {
         var claims = Jwts.parserBuilder().setSigningKey(key).build()
             .parseClaimsJws(token).getBody();
         String username = claims.getSubject();
-        UserDetailsService uds = new UserJwtUserDetailsService(null); // injected by Spring normally
-        UserDetails userDetails = uds.loadUserByUsername(username);
+        UserDetails userDetails = userDetailsService.loadUserByUsername(username);
         return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
     }
 }

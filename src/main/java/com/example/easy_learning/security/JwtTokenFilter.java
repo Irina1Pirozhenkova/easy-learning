@@ -4,6 +4,7 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -21,27 +22,30 @@ public class JwtTokenFilter extends GenericFilterBean {
     private final JwtTokenProvider jwtTokenProvider;
 
     @Override
-    @SneakyThrows
-    public void doFilter(ServletRequest servletRequest,
-                         ServletResponse servletResponse,
-                         FilterChain filterChain) throws IOException, ServletException {
+    public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain)
+            throws IOException, ServletException {
+        HttpServletRequest request = (HttpServletRequest) req;
 
-        String bearerToken = ((HttpServletRequest) servletRequest).getHeader("Authorization");
-        if (bearerToken != null && bearerToken.startsWith("Bearer ")) {//Получаем заголовок Authorization
-            bearerToken = bearerToken.substring(7);
+        String token = null;
+        String authHeader = request.getHeader("Authorization");
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            token = authHeader.substring(7);
         }
 
-        try {//Получаем объект Authentication, в котором содержится пользователь,
-            if (bearerToken != null && jwtTokenProvider.validate(bearerToken)) { //Проверяем: токен есть и он валидный
-                Authentication authentication = jwtTokenProvider.getAuthentication(bearerToken);
-                if (authentication != null) {
-                    SecurityContextHolder.getContext().setAuthentication(authentication);
-                }//Вставляем Authentication в контекст безопасности, чтобы Spring знал: "этот пользователь авторизован"
+        // Если в заголовке нет — ищем в куках
+        if (token == null && request.getCookies() != null) {
+            for (Cookie c : request.getCookies()) {
+                if ("accessToken".equals(c.getName())) {
+                    token = c.getValue();
+                }
             }
-        } catch (Exception ignored) {
         }
 
-        filterChain.doFilter(servletRequest, servletResponse);
-        //Передаём управление дальше — другим фильтрам, контроллерам и т.д.
+        if (token != null && jwtTokenProvider.validate(token)) {
+            Authentication auth = jwtTokenProvider.getAuthentication(token);
+            SecurityContextHolder.getContext().setAuthentication(auth);
+        }
+
+        chain.doFilter(req, res);
     }
 }

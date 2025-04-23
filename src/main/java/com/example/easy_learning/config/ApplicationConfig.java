@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -16,12 +17,18 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+
+import java.nio.file.Paths;
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity
 @RequiredArgsConstructor(onConstructor = @__(@Lazy))
-public class ApplicationConfig {
+public class ApplicationConfig implements WebMvcConfigurer {
 
   private final UserJwtUserDetailsService userDetailsService;
   private final JwtTokenFilter jwtFilter;
@@ -39,30 +46,64 @@ public class ApplicationConfig {
     return provider;
   }
 
-  // AuthenticationManager для аутентификации
   @Bean
   public AuthenticationManager authenticationManager(HttpSecurity http) throws Exception {
-    AuthenticationManagerBuilder builder = http.getSharedObject(AuthenticationManagerBuilder.class);
+    AuthenticationManagerBuilder builder =
+            http.getSharedObject(AuthenticationManagerBuilder.class);
     builder.authenticationProvider(authenticationProvider());
     return builder.build();
   }
 
-  // Основная конфигурация безопасности
   @Bean
   public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
     http
             .csrf(AbstractHttpConfigurer::disable)
             .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-            .authenticationProvider(authenticationProvider())
-            .authorizeHttpRequests(authorize -> authorize
-                    .requestMatchers("/api/v1/auth/**").permitAll()
-                    .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
-                    .requestMatchers("/css/**", "/js/**", "/images/**", "/favicon.ico").permitAll()
-                    .requestMatchers("/login", "/register", "/", "/css/**", "/js/**").permitAll()
-                    .anyRequest().authenticated()
+            .exceptionHandling(ex -> ex
+                    .authenticationEntryPoint(new LoginUrlAuthenticationEntryPoint("/frontend/login"))
+                    .accessDeniedHandler((request, response, denied) ->
+                            response.sendRedirect("/frontend?denied")
+                    )
             )
-            .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+            .authenticationProvider(authenticationProvider())
+            .authorizeHttpRequests(authz -> authz
+                    // публичные формы входа/регистрации
+                    .requestMatchers(
+                            "/frontend/login",
+                            "/frontend/login-page",
+                            "/frontend/register"
+                    ).permitAll()
+                    // статика
+                    .requestMatchers("/css/**", "/js/**", "/images/**", "/favicon.ico")
+                    .permitAll()
+                    // все остальные /frontend/** — только авторизованные
+                    .requestMatchers("/frontend/**").authenticated()
+                    // API-эндпоинты под /api/v1/auth разрешены
+                    .requestMatchers("/api/v1/auth/**").permitAll()
+                    // API всё, что под /api/**, — по JWT
+                    .requestMatchers("/api/**").authenticated()
+            )
+            .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
+            .logout(logout -> logout
+                    // URL, на который вы будете редиректить при логауте
+                    .logoutUrl("/frontend/logout")
+                    // после успешного логаута — на страницу входа
+                    .logoutSuccessUrl("/frontend/login")
+                    // очищаем куку с именем accessToken
+                    .deleteCookies("accessToken")
+                    .permitAll()
+            );
 
     return http.build();
+  }
+
+  @Override
+  public void addResourceHandlers(ResourceHandlerRegistry registry) {
+    // Все запросы /uploads/** будут уходить в файловую систему uploadDir
+    String absolutePath = Paths.get(System.getProperty("user.dir"), "uploads")
+            .toUri().toString();
+    registry
+            .addResourceHandler("/uploads/**")
+            .addResourceLocations(absolutePath);
   }
 }

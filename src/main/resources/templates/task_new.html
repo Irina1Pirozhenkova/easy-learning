@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+    <title>Новая задача</title>
+</head>
+<body>
+<section layout:fragment="content">
+    <h1>Создать новую задачу</h1>
+    <form th:action="@{/frontend/new}"
+          method="post"
+          enctype="multipart/form-data"
+          th:object="${taskForm}">
+
+        <!-- Выпадающий список для ClassLevel -->
+        <div class="mb-3">
+            <label for="className" class="form-label">Класс</label>
+            <select id="className"
+                    th:field="*{className}"
+                    class="form-select"
+                    required>
+                <option th:each="cl : ${classLevels}"
+                        th:value="${cl}"
+                        th:text="${cl}">CLASS_10</option>
+            </select>
+        </div>
+
+        <!-- Выпадающий список для Subject -->
+        <div class="mb-3">
+            <label for="subject" class="form-label">Предмет</label>
+            <select id="subject"
+                    th:field="*{subject}"
+                    class="form-select"
+                    required>
+                <option th:each="sub : ${subjects}"
+                        th:value="${sub}"
+                        th:text="${sub}">MATH</option>
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label for="topic" class="form-label">Тема</label>
+            <input type="text"
+                   id="topic"
+                   th:field="*{topic}"
+                   class="form-control"
+                   placeholder="Algebra basics"
+                   required>
+        </div>
+
+        <div class="mb-3">
+            <label for="difficulty" class="form-label">Сложность</label>
+            <input type="number"
+                   id="difficulty"
+                   th:field="*{difficulty}"
+                   class="form-control"
+                   min="1" max="5"
+                   required>
+        </div>
+
+        <div class="mb-3">
+            <label for="description" class="form-label">Описание</label>
+            <textarea id="description"
+                      th:field="*{description}"
+                      class="form-control"
+                      rows="3"
+                      placeholder="Описание задачи"></textarea>
+        </div>
+
+        <div class="mb-3">
+            <label for="file" class="form-label">Изображение</label>
+            <input type="file"
+                   id="file"
+                   name="file"
+                   class="form-control"
+                   accept="image/*"
+                   required>
+        </div>
+
+        <button type="submit" class="btn btn-success">Создать</button>
+        <a th:href="@{/frontend/tasks}" class="btn btn-secondary ms-2">Отмена</a>
+    </form>
+</section>
+</body>
+</html>

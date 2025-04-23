@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+    <title>Задачи</title>
+</head>
+<body>
+<section layout:fragment="content">
+    <h1>Мои задачи</h1>
+
+    <table class="table table-bordered">
+        <thead class="table-light">
+        <tr>
+            <th>
+                <a th:href="@{/frontend/tasks(sort='className')}"
+                   th:text="${sort=='className'} ? 'Класс 🔽' : 'Класс'">
+                    Класс
+                </a>
+            </th>
+            <th>
+                <a th:href="@{/frontend/tasks(sort='subject')}"
+                   th:text="${sort=='subject'} ? 'Предмет 🔽' : 'Предмет'">
+                    Предмет
+                </a>
+            </th>
+            <th>
+                <a th:href="@{/frontend/tasks(sort='topic')}"
+                   th:text="${sort=='topic'} ? 'Тема 🔽' : 'Тема'">
+                    Тема
+                </a>
+            </th>
+            <th>
+                <a th:href="@{/frontend/tasks(sort='difficulty')}"
+                   th:text="${sort=='difficulty'} ? 'Сложность 🔽' : 'Сложность'">
+                    Сложность
+                </a>
+            </th>
+            <th>
+                <a th:href="@{/frontend/tasks(sort='description')}"
+                   th:text="${sort=='description'} ? 'Описание 🔽' : 'Описание'">
+                    Описание
+                </a>
+            </th>
+        </tr>
+        </thead>
+        <tbody>
+        <th:block th:each="classEntry : ${groupedTasks}">
+            <tr class="table-secondary">
+                <td colspan="5" th:text="'Класс: ' + ${classEntry.key}">Класс: ...</td>
+            </tr>
+
+            <th:block th:each="subjectEntry : ${classEntry.value}">
+                <tr class="table-active">
+                    <td colspan="5" th:text="'  Предмет: ' + ${subjectEntry.key}">Предмет: ...</td>
+                </tr>
+
+                <tr th:each="task : ${subjectEntry.value}">
+                    <td th:text="${task.className}">10A</td>
+                    <td th:text="${task.subject}">Math</td>
+                    <td th:text="${task.topic}">Algebra</td>
+                    <td th:text="${task.difficulty}">3</td>
+                    <td th:text="${task.description}">Описание задачи…</td>
+                </tr>
+            </th:block>
+        </th:block>
+        </tbody>
+    </table>
+
+    <div class="mt-4">
+        <a class="btn btn-success" th:href="@{/frontend/new}">Создать новую задачу</a>
+    </div>
+</section>
+</body>
+</html>

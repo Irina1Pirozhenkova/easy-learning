@@ -11,8 +11,8 @@ import java.util.Set;
 @Mapper(componentModel = "spring")
 public interface TaskMapper {
 
-//  @Mapping(target = "tutor.id", source = "tutorId")
-//  Task toNREntity(TaskNRDto taskNRDto);
+  @Mapping(target = "tutor.id", source = "tutorId")
+  Task toNREntity(TaskNRDto taskNRDto);
 //
 //  @Mapping(target = "tutorId", source = "tutor.id")
 //  TaskNRDto toNRDto(Task task);

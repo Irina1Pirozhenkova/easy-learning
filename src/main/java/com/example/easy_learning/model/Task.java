@@ -22,14 +22,19 @@ public class Task {
     @Column(name = "photo_url", nullable = false)
     private String photoUrl;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "class", nullable = false)
-    private String className; // Используем "className" вместо "class"
+    private ClassLevel className;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "subject", nullable = false)
-    private String subject;
+    private Subject subject;
 
     @Column(name = "topic", nullable = false)
     private String topic;
+
+    @Column(name = "description", nullable = false)
+    private String description;
 
     @Column(name = "difficulty", nullable = false)
     private Integer difficulty;

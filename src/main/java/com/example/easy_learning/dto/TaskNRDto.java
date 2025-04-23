@@ -13,6 +13,8 @@ public class TaskNRDto {
 
   private String subject;
 
+  private String description;
+
   private String topic;
 
   private Integer difficulty;

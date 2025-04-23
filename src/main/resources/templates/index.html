@@ -2,7 +2,18 @@
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layout}">
-<head><title th:text="'Главная'"></title></head>
+<head>
+  <title th:text="'Главная'"></title>
+  <script th:inline="javascript">
+    // Если в URL есть параметр denied, выводим alert и очищаем URL
+    const params = new URLSearchParams(window.location.search);
+    if (params.has('denied')) {
+      alert('Доступ запрещён');
+      // убираем параметр из адресной строки
+      history.replaceState(null, '', '/frontend');
+    }
+  </script>
+</head>
 <body>
 <section layout:fragment="content">
   <div class="text-center py-5">

@@ -19,73 +19,85 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class TaskServiceImpl implements TaskService {
 
-    private final TaskRepository taskRepository;
-    private final String uploadDir = "./uploads";
+  private final TaskRepository taskRepository;
+  private final Path uploadDir = Paths.get(System.getProperty("user.dir"), "uploads");
 
-    @Override
-    public Task createTask(Task task) {
-        return taskRepository.save(task);
-    }
+  @Override
+  public Task createTask(Task task) {
+    return taskRepository.save(task);
+  }
 
-    @Override
-    public Task createTaskWithFile(Task task, MultipartFile file) throws IOException {
-        String photoUrl = saveFile(file);
-        task.setPhotoUrl(photoUrl);
-        return taskRepository.save(task);
-    }
+  @Override
+  public Task createTaskWithFile(Task task, MultipartFile file) throws IOException {
+    String photoUrl = saveFile(file);
+    task.setPhotoUrl(photoUrl);
+    return taskRepository.save(task);
+  }
 
-    @Override
-    public Task getTaskByIdWithAllRelations(Integer id) {
-        return taskRepository.findByIdWithAllRelations(id)
-                .orElseThrow(() -> new RuntimeException("Task not found"));
-    }
+  @Override
+  public Task getTaskByIdWithAllRelations(Integer id) {
+    return taskRepository.findByIdWithAllRelations(id)
+            .orElseThrow(() -> new RuntimeException("Task not found"));
+  }
 
-    @Override
-    public List<Task> getAllTasks() {
-        return taskRepository.findAll();
-    }
+  @Override
+  public List<Task> getAllTasks() {
+    return taskRepository.findAll();
+  }
 
-    @Override
-    public Task updateTask(Integer id, Task updatedTask, MultipartFile file) throws IOException {
-        Task existingTask = getTaskByIdWithAllRelations(id);
-        existingTask.setClassName(updatedTask.getClassName());
-        existingTask.setSubject(updatedTask.getSubject());
-        existingTask.setTopic(updatedTask.getTopic());
-        existingTask.setDifficulty(updatedTask.getDifficulty());
-        existingTask.setTutor(updatedTask.getTutor());
-        if (file != null && !file.isEmpty()) {
-            existingTask.setPhotoUrl(saveFile(file));
-        }
-        return taskRepository.save(existingTask);
+  @Override
+  public Task updateTask(Integer id, Task updatedTask, MultipartFile file) throws IOException {
+    Task existingTask = getTaskByIdWithAllRelations(id);
+    existingTask.setClassName(updatedTask.getClassName());
+    existingTask.setSubject(updatedTask.getSubject());
+    existingTask.setTopic(updatedTask.getTopic());
+    existingTask.setDifficulty(updatedTask.getDifficulty());
+    existingTask.setTutor(updatedTask.getTutor());
+    if (file != null && !file.isEmpty()) {
+      existingTask.setPhotoUrl(saveFile(file));
     }
+    return taskRepository.save(existingTask);
+  }
 
-    @Override
-    public byte[] getTaskPhoto(Integer taskId) throws IOException {
-        Task task = taskRepository.findById(taskId)
-                .orElseThrow(() -> new RuntimeException("Task not found"));
-        Path path = Paths.get(task.getPhotoUrl());
-        return Files.readAllBytes(path);
-    }
+  @Override
+  public byte[] getTaskPhoto(Integer taskId) throws IOException {
+    Task task = taskRepository.findById(taskId)
+            .orElseThrow(() -> new RuntimeException("Task not found"));
+    Path path = Paths.get(task.getPhotoUrl());
+    return Files.readAllBytes(path);
+  }
 
-    @Override
-    public void deleteTask(Integer id) {
-        taskRepository.deleteById(id);
-    }
+  @Override
+  public void deleteTask(Integer id) {
+    taskRepository.deleteById(id);
+  }
 
-    private String saveFile(MultipartFile file) throws IOException {
-        String ext = file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf("."));
-        String uniqueName = UUID.randomUUID().toString() + ext;
-        Path dir = Paths.get(uploadDir);
-        Files.createDirectories(dir);
-        Path path = dir.resolve(uniqueName);
-        file.transferTo(path.toFile());
-        return uploadDir + File.separator + uniqueName;
-    }
+  private String saveFile(MultipartFile file) throws IOException {
+    // Получаем расширение
+    String original = file.getOriginalFilename();
+    String ext = original != null && original.contains(".")
+            ? original.substring(original.lastIndexOf('.'))
+            : "";
 
-    @Override
-    public Task getTaskById(Integer id) {
-        return taskRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Task not found with id: " + id));
-    }
+    String uniqueName = UUID.randomUUID() + ext;
+
+    // Создаём директорию (если ещё нет)
+    Files.createDirectories(uploadDir);
+
+    // Абсолютный путь для сохранения
+    Path filePath = uploadDir.resolve(uniqueName);
+
+    // Сохраняем файл
+    file.transferTo(filePath.toFile());
+
+    // Возвращаем URL для доступа
+    return "/uploads/" + uniqueName;
+  }
+
+  @Override
+  public Task getTaskById(Integer id) {
+    return taskRepository.findById(id)
+            .orElseThrow(() -> new RuntimeException("Task not found with id: " + id));
+  }
 
 }
