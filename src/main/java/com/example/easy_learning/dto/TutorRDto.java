@@ -19,8 +19,6 @@ public class TutorRDto {
 
   private Set<TaskNRDto> tasks;
 
-  private Set<HomeworkNRDto> homeworks;
-
   private String email;
 
   private Set<StudentNRDto> students;

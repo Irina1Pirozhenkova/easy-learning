@@ -74,5 +74,5 @@ jib {
 
 tasks.register('dockerRebuild') {
     dependsOn tasks.named('jibDockerBuild')
-    doLast { exec { commandLine 'docker', 'compose', 'up', '--force-recreate', 'app' } }
+    doLast { exec { commandLine 'docker', 'compose', 'up', '-d', '--force-recreate', 'app' } }
 }

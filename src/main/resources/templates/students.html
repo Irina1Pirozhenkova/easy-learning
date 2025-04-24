@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+    <title>Мои студенты</title>
+</head>
+<body>
+<section layout:fragment="content">
+    <h1>Мои студенты</h1>
+
+    <table class="table table-bordered">
+        <thead class="table-light">
+        <tr>
+            <th>ID</th>
+            <th>Email</th>
+            <th>Имя</th>
+            <th>Фамилия</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="student : ${students}">
+            <td th:text="${student.id}">1</td>
+            <td th:text="${student.email}">mail@example.com</td>
+            <td th:text="${student.personalInfo.firstname}">Иван</td>
+            <td th:text="${student.personalInfo.lastname}">Иванов</td>
+        </tr>
+        </tbody>
+    </table>
+
+    <form th:action="@{/frontend/students}" method="post" class="d-flex gap-2 mt-4">
+        <input type="number"
+               name="studentId"
+               class="form-control"
+               placeholder="ID студента"
+               required />
+        <button type="submit" class="btn btn-primary">Добавить студента</button>
+    </form>
+</section>
+</body>
+</html>

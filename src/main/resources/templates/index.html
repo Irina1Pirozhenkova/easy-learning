@@ -1,25 +1,45 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/springsecurity6"
       layout:decorate="~{layout}">
-<head>
-  <title th:text="'Главная'"></title>
-  <script th:inline="javascript">
-    // Если в URL есть параметр denied, выводим alert и очищаем URL
-    const params = new URLSearchParams(window.location.search);
-    if (params.has('denied')) {
-      alert('Доступ запрещён');
-      // убираем параметр из адресной строки
-      history.replaceState(null, '', '/frontend');
-    }
-  </script>
-</head>
+<head><title>Главная</title></head>
 <body>
 <section layout:fragment="content">
-  <div class="text-center py-5">
-    <h1 class="display-4">Добро пожаловать в EasyLearning!</h1>
-    <p class="lead">Вы успешно вошли в систему. Функционал появится позже 😉</p>
+
+  <!-- для студента — список его задач -->
+  <div sec:authorize="hasRole('STUDENT')">
+    <h2>Мои задачи</h2>
+    <table class="table table-hover">
+      <thead>
+      <tr>
+        <th>Класс</th>
+        <th>Предмет</th>
+        <th>Тема</th>
+        <th>Сложность</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr th:each="task : ${myTasks}"
+          th:onclick="|window.location='@{/frontend/tasks/{id}(id=${task.id})}'|"
+          style="cursor:pointer">
+        <td th:text="${task.className}">CLASS_1</td>
+        <td th:text="${task.subject}">MATH</td>
+        <td th:text="${task.topic}">Algebra</td>
+        <td th:text="${task.difficulty}">3</td>
+      </tr>
+      </tbody>
+    </table>
   </div>
+
+  <!-- для остальных (тьютор / гость) — старое приветствие -->
+  <div sec:authorize="!hasRole('STUDENT')">
+    <div class="text-center py-5">
+      <h1 class="display-4">Добро пожаловать в EasyLearning!</h1>
+      <p class="lead">Вы успешно вошли в систему. Функционал появится позже 😉</p>
+    </div>
+  </div>
+
 </section>
 </body>
 </html>

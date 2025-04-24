@@ -50,7 +50,9 @@ public class AuthController {
     if (dto.isTutor()) {
       user.getRoles().add(Role.TUTOR);
     }
-    user.getRoles().add(Role.STUDENT);
+    else {
+      user.getRoles().add(Role.STUDENT);
+    }
     return ResponseEntity.ok(userService.create(user));
   }
 }

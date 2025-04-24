@@ -1,23 +1,7 @@
 package com.example.easy_learning.controller;
 
-import com.example.easy_learning.dto.TaskNRDto;
-import com.example.easy_learning.dto.TaskRDto;
-import com.example.easy_learning.dto.TutorNRDto;
-import com.example.easy_learning.mapper.HomeworkTaskMapper;
-import com.example.easy_learning.mapper.TaskMapper;
-import com.example.easy_learning.mapper.TutorMapper;
-import com.example.easy_learning.model.Task;
-import com.example.easy_learning.service.TaskService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
 
 @RestController
 @RequestMapping("/api/tasks")

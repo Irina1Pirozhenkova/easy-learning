@@ -37,13 +37,9 @@ public class User {
   @OneToMany(mappedBy = "tutor", cascade = CascadeType.ALL, orphanRemoval = true)
   private Set<Task> tasks = new HashSet<>();
 
-  // Домашние задания, созданные репетитором
-  @OneToMany(mappedBy = "tutor", cascade = CascadeType.ALL, orphanRemoval = true)
-  private Set<Homework> homeworks = new HashSet<>();
-
   // Связи ученик–домзадание
   @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, orphanRemoval = true)
-  private Set<StudentsHomework> studentHomeworks = new HashSet<>();
+  private Set<StudentsTasks> studentsTasks = new HashSet<>();
 
   // Связи ученик–тьютор (роль STUDENT)
   @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, orphanRemoval = true)

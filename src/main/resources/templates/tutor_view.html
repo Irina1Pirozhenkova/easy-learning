@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+  <title th:text="'Репетитор ' + ${tutor.personalInfo.firstname} + ' ' + ${tutor.personalInfo.lastname}"></title>
+</head>
+<body>
+<section layout:fragment="content">
+  <h1>Данные репетитора</h1>
+
+  <dl class="row">
+    <dt class="col-sm-3">ID</dt>
+    <dd class="col-sm-9" th:text="${tutor.id}"></dd>
+
+    <dt class="col-sm-3">Email</dt>
+    <dd class="col-sm-9" th:text="${tutor.email}"></dd>
+
+    <dt class="col-sm-3">Имя</dt>
+    <dd class="col-sm-9" th:text="${tutor.personalInfo.firstname}"></dd>
+
+    <dt class="col-sm-3">Фамилия</dt>
+    <dd class="col-sm-9" th:text="${tutor.personalInfo.lastname}"></dd>
+
+    <dt class="col-sm-3">Дата рождения</dt>
+    <dd class="col-sm-9" th:text="${tutor.personalInfo.birthdate}"></dd>
+
+    <dt class="col-sm-3">Телефон</dt>
+    <dd class="col-sm-9" th:text="${tutor.personalInfo.phone}"></dd>
+
+    <dt class="col-sm-3">Telegram</dt>
+    <dd class="col-sm-9" th:text="${tutor.personalInfo.telegram}"></dd>
+  </dl>
+
+  <a th:href="@{/frontend/tutors}" class="btn btn-secondary">Назад</a>
+</section>
+</body>
+</html>

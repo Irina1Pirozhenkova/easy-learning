@@ -4,8 +4,11 @@
       layout:decorate="~{layout}">
 <head>
     <title>Задачи</title>
+
+
 </head>
 <body>
+<div th:if="${assignSuccess}" class="alert alert-success" th:text="${assignSuccess}"></div>
 <section layout:fragment="content">
     <h1>Мои задачи</h1>
 
@@ -42,6 +45,7 @@
                     Описание
                 </a>
             </th>
+            <th>Действия</th>
         </tr>
         </thead>
         <tbody>
@@ -55,12 +59,28 @@
                     <td colspan="5" th:text="'  Предмет: ' + ${subjectEntry.key}">Предмет: ...</td>
                 </tr>
 
-                <tr th:each="task : ${subjectEntry.value}">
+                <tr th:each="task : ${subjectEntry.value}"
+                    th:onclick="|window.location='@{/frontend/tasks/{id}(id=${task.id})}'|"
+                    style="cursor:pointer">
                     <td th:text="${task.className}">10A</td>
                     <td th:text="${task.subject}">Math</td>
                     <td th:text="${task.topic}">Algebra</td>
                     <td th:text="${task.difficulty}">3</td>
                     <td th:text="${task.description}">Описание задачи…</td>
+                    <td onclick="event.stopPropagation()">
+                        <form th:action="@{/frontend/tasks/assign}" method="post" class="d-flex">
+                            <input type="hidden" name="taskId" th:value="${task.id}"/>
+                            <select name="studentId"
+                                    class="form-select form-select-sm me-1"
+                                    required>
+                                <option th:each="stu : ${studentsList}"
+                                        th:value="${stu.id}"
+                                        th:text="${stu.personalInfo.firstname + ' ' + stu.personalInfo.lastname}">
+                                </option>
+                            </select>
+                            <button type="submit" class="btn btn-sm btn-success">Назначить</button>
+                        </form>
+                    </td>
                 </tr>
             </th:block>
         </th:block>
@@ -70,6 +90,8 @@
     <div class="mt-4">
         <a class="btn btn-success" th:href="@{/frontend/new}">Создать новую задачу</a>
     </div>
+
 </section>
+
 </body>
 </html>

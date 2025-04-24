@@ -2,14 +2,13 @@ package com.example.easy_learning.model;
 
 import jakarta.persistence.*;
 import lombok.*;
-import lombok.Data;
 
 @Entity
-@Table(name = "students_homework")
+@Table(name = "students_tasks")
 @Getter
 @Setter
 @NoArgsConstructor
-public class StudentsHomework {
+public class StudentsTasks {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -19,8 +18,8 @@ public class StudentsHomework {
     private User student;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "homework_id")
-    private Homework homework;
+    @JoinColumn(name = "task_id")
+    private Task task;
 
     private Boolean isDone;
 
@@ -30,11 +29,11 @@ public class StudentsHomework {
 
     public void setStudent(User student) {
         this.student = student;
-        if (student != null && student.getHomeworks() != null) student.getStudentHomeworks().add(this);
+        if (student != null && student.getStudentsTasks() != null) student.getStudentsTasks().add(this);
     }
 
-    public void setHomework(Homework homework) {
-        this.homework = homework;
-        if (homework != null && homework.getStudents() != null) homework.getStudents().add(this);
+    public void setTask(Task task) {
+        this.task = task;
+        if (task != null && task.getStudentsTasks() != null) task.getStudentsTasks().add(this);
     }
 }

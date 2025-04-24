@@ -5,7 +5,7 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.6.xsd">
 
-    <changeSet id="create-homework-table" author="yourName">
-        <sqlFile path="homework.sql" relativeToChangelogFile="true"/>
+    <changeSet id="create-students_tasks-table" author="yourName">
+        <sqlFile path="students_tasks.sql" relativeToChangelogFile="true"/>
     </changeSet>
 </databaseChangeLog>

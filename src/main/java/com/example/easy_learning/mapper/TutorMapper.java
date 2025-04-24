@@ -8,7 +8,7 @@ import org.mapstruct.Mapping;
 
 import java.util.Set;
 
-@Mapper(componentModel = "spring", uses = {TutorPersonalInfoMapper.class})
+@Mapper(componentModel = "spring")
 public interface TutorMapper {
 
 //  Tutor toNREntity(TutorNRDto tutorNRDto);

@@ -6,7 +6,7 @@ spring:
     password: 12345
     driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
-    show-sql: true
+#    show-sql: true
     database-platform: org.hibernate.dialect.MySQLDialect
     hibernate:
       ddl-auto: validate
@@ -20,6 +20,10 @@ spring:
     change-log: classpath:db/changelog/db.changelog-master.xml
     enabled: true
 
+
+logging:
+  level:
+    org.springframework.security: TRACE
 security:
   jwt:
 #    secret: ${JWT_SECRET}

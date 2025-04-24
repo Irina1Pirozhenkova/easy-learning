@@ -1,7 +1,6 @@
 package com.example.easy_learning.model;
 
 import jakarta.persistence.*;
-import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -44,5 +43,5 @@ public class Task {
     private User tutor;
 
     @OneToMany(mappedBy = "task", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<HomeworkTask> homeworks = new HashSet<>();
+    private Set<StudentsTasks> studentsTasks = new HashSet<>();
 }

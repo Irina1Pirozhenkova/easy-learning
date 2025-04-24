@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/springsecurity6"
+      layout:decorate="~{layout}">
+<head><title>Личный кабинет</title></head>
+<body>
+<section layout:fragment="content">
+    <h1>Личный кабинет</h1>
+
+    <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+
+    <form th:action="@{/frontend/profile}" th:object="${profile}" method="post" class="row g-3">
+        <input type="hidden" th:field="*{id}"/>
+
+        <div class="col-md-6">
+            <label class="form-label">Email</label>
+            <input type="email" th:field="*{email}" class="form-control" required/>
+        </div>
+        <div class="col-md-6">
+            <label class="form-label">Новый пароль</label>
+            <input type="password" th:field="*{password}" class="form-control"
+                   placeholder="Оставьте пустым, чтобы не менять"/>
+        </div>
+
+        <div class="col-md-4">
+            <label class="form-label">Имя</label>
+            <input type="text" th:field="*{firstname}" class="form-control" required/>
+        </div>
+        <div class="col-md-4">
+            <label class="form-label">Фамилия</label>
+            <input type="text" th:field="*{lastname}" class="form-control" required/>
+        </div>
+        <div class="col-md-4">
+            <label class="form-label">Дата рождения</label>
+            <input type="date" th:field="*{birthdate}" class="form-control" required/>
+        </div>
+
+        <div class="col-md-6">
+            <label class="form-label">Телефон</label>
+            <input type="text" th:field="*{phone}" class="form-control"/>
+        </div>
+        <div class="col-md-6">
+            <label class="form-label">Telegram</label>
+            <input type="text" th:field="*{telegram}" class="form-control"/>
+        </div>
+
+        <div class="col-12">
+            <button class="btn btn-primary" type="submit">Сохранить</button>
+        </div>
+    </form>
+</section>
+</body>
+</html>

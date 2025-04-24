@@ -1,5 +1,6 @@
 package com.example.easy_learning.service;
 
+import com.example.easy_learning.dto.ProfileDto;
 import com.example.easy_learning.model.User;
 import java.util.Optional;
 
@@ -9,4 +10,7 @@ public interface UserService {
 
     // Найти пользователя по email
     Optional<User> findByEmail(String email);
+    Optional<User> findById(Integer id);
+
+    User updateProfile(ProfileDto dto);
 }

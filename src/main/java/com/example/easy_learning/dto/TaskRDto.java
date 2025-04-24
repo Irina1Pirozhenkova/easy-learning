@@ -20,6 +20,4 @@ public class TaskRDto {
   private Integer difficulty;
 
   private TutorNRDto tutor;
-
-  private Set<HomeworkTaskHDto> homeworks;
 }

@@ -1,6 +1,5 @@
 package com.example.easy_learning.dto;
 
-import com.example.easy_learning.model.StudentsHomework;
 import lombok.Data;
 
 import java.util.Set;
@@ -15,8 +14,6 @@ public class StudentRDto {
   private StudentPersonalInfoDto studentPersonalInfo;
 
   private String email;
-
-  private Set<StudentsHomeworkHDto> homeworks;
 
   private Set<StudentsTutorsTDto> tutors;
 }

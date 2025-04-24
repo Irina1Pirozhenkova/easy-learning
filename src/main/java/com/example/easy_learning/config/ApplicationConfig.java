@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -67,20 +68,12 @@ public class ApplicationConfig implements WebMvcConfigurer {
             )
             .authenticationProvider(authenticationProvider())
             .authorizeHttpRequests(authz -> authz
-                    // публичные формы входа/регистрации
-                    .requestMatchers(
-                            "/frontend/login",
-                            "/frontend/login-page",
-                            "/frontend/register"
-                    ).permitAll()
-                    // статика
-                    .requestMatchers("/css/**", "/js/**", "/images/**", "/favicon.ico")
-                    .permitAll()
-                    // все остальные /frontend/** — только авторизованные
+                    .requestMatchers("/frontend/login", "/frontend/login-page", "/frontend/register").permitAll()
+                    .requestMatchers(HttpMethod.POST, "/frontend/tasks/assign").hasRole("TUTOR")
+                    .requestMatchers("/css/**", "/js/**", "/images/**", "/favicon.ico").permitAll()
+                    .requestMatchers("/uploads/**").permitAll()
                     .requestMatchers("/frontend/**").authenticated()
-                    // API-эндпоинты под /api/v1/auth разрешены
                     .requestMatchers("/api/v1/auth/**").permitAll()
-                    // API всё, что под /api/**, — по JWT
                     .requestMatchers("/api/**").authenticated()
             )
             .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
@@ -97,13 +90,26 @@ public class ApplicationConfig implements WebMvcConfigurer {
     return http.build();
   }
 
+//  @Override
+//  public void addResourceHandlers(ResourceHandlerRegistry registry) {
+//    // Все запросы /uploads/** будут уходить в файловую систему uploadDir
+//    String absolutePath = Paths.get(System.getProperty("user.dir"), "uploads")
+//            .toUri().toString();
+//    registry
+//            .addResourceHandler("/uploads/**")
+//            .addResourceLocations(absolutePath);
+//  }
+
   @Override
   public void addResourceHandlers(ResourceHandlerRegistry registry) {
-    // Все запросы /uploads/** будут уходить в файловую систему uploadDir
-    String absolutePath = Paths.get(System.getProperty("user.dir"), "uploads")
-            .toUri().toString();
-    registry
-            .addResourceHandler("/uploads/**")
-            .addResourceLocations(absolutePath);
+    registry.addResourceHandler("/uploads/**")
+            .addResourceLocations("file:/app/uploads/");
   }
+
+//  @Override
+//  public void addResourceHandlers(ResourceHandlerRegistry registry) {
+//    String uploadPath = System.getProperty("user.dir") + "/uploads/";
+//    registry.addResourceHandler("/uploads/**")
+//            .addResourceLocations("file:" + uploadPath);
+//  }
 }

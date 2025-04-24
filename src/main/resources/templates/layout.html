@@ -21,8 +21,16 @@
             <li class="nav-item me-3" sec:authorize="hasRole('TUTOR')">
                 <a class="nav-link text-white" th:href="@{/frontend/tasks}">Задачи</a>
             </li>
+            <li class="nav-item me-3" sec:authorize="hasRole('TUTOR')">
+                <a class="nav-link text-white" th:href="@{/frontend/students}">Мои студенты</a>
+            </li>
         </ul>
-
+        <li class="nav-item me-3" sec:authorize="hasAnyRole('STUDENT','TUTOR')">
+            <a class="nav-link text-white" th:href="@{/frontend/profile}">Личный кабинет</a>
+        </li>
+        <li class="nav-item me-3" sec:authorize="hasRole('STUDENT')">
+            <a class="nav-link text-white" th:href="@{/frontend/tutors}">Мои репетиторы</a>
+        </li>
         <button id="logoutBtn" class="btn btn-outline-light btn-sm d-none">Выйти</button>
     </div>
 </header>

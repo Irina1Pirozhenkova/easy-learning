@@ -5,10 +5,8 @@
 
     <!-- Core tables -->
     <include file="users.xml" relativeToChangelogFile="true"/>
-    <include file="homework.xml" relativeToChangelogFile="true"/>
     <include file="task.xml" relativeToChangelogFile="true"/>
-    <include file="homework_task.xml" relativeToChangelogFile="true"/>
-    <include file="student_homework.xml" relativeToChangelogFile="true"/>
+    <include file="students_tasks.xml" relativeToChangelogFile="true"/>
     <include file="student_tutors.xml" relativeToChangelogFile="true"/>
 
     <!-- Тестовые данные, если нужно -->

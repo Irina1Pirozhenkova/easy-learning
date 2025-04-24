@@ -20,7 +20,8 @@ import java.util.UUID;
 public class TaskServiceImpl implements TaskService {
 
   private final TaskRepository taskRepository;
-  private final Path uploadDir = Paths.get(System.getProperty("user.dir"), "uploads");
+//  private final Path uploadDir = Paths.get(System.getProperty("user.dir"), "uploads");
+  private final Path uploadDir = Paths.get("/app/uploads");
 
   @Override
   public Task createTask(Task task) {
