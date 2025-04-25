@@ -61,7 +61,9 @@ public class ApplicationConfig implements WebMvcConfigurer {
             .csrf(AbstractHttpConfigurer::disable)
             .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .exceptionHandling(ex -> ex
+                    // Если не аутентифицирован (нет токена) — редирект на /frontend/login
                     .authenticationEntryPoint(new LoginUrlAuthenticationEntryPoint("/frontend/login"))
+                    // Если аутентифицирован, но нет нужной роли — редирект на /frontend?denied
                     .accessDeniedHandler((request, response, denied) ->
                             response.sendRedirect("/frontend?denied")
                     )
@@ -78,7 +80,7 @@ public class ApplicationConfig implements WebMvcConfigurer {
             )
             .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
             .logout(logout -> logout
-                    // URL, на который вы будете редиректить при логауте
+                    //  при логауте
                     .logoutUrl("/frontend/logout")
                     // после успешного логаута — на страницу входа
                     .logoutSuccessUrl("/frontend/login")

@@ -1,3 +1,4 @@
+<!-- главная страница -->
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
@@ -32,11 +33,10 @@
     </table>
   </div>
 
-  <!-- для остальных (тьютор / гость) — старое приветствие -->
+  <!-- для тьютор  -->
   <div sec:authorize="!hasRole('STUDENT')">
     <div class="text-center py-5">
       <h1 class="display-4">Добро пожаловать в EasyLearning!</h1>
-      <p class="lead">Вы успешно вошли в систему. Функционал появится позже 😉</p>
     </div>
   </div>
 

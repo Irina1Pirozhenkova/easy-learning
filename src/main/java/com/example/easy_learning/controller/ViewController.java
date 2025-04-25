@@ -36,31 +36,37 @@ public class ViewController {
   private final StudentsTutorsService studentsTutorsService;
   private final StudentsTasksRepository studentsTasksRepo;
 
-  // 2.1 Страница «Мои репетиторы»
+  // Страница «Мои репетиторы»
   @PreAuthorize("hasRole('STUDENT')")
   @GetMapping("/tutors")
   public String tutorsPage(Model model, Authentication auth) {
+    //берёт текущего пользователя (приведённого к вашему UserJwtEntity) и его id
     Integer studentId = ((UserJwtEntity) auth.getPrincipal()).getId();
+    //Запрашивает у сервиса список его репетиторови кладёт в модель tutors,Возвращает шаблон tutors.html
     model.addAttribute("tutors", studentsTutorsService.getTutorsForStudent(studentId));
     return "tutors";
   }
 
-  // 2.2 Просмотр одного репетитора
+  // Просмотр одного репетитора
   @PreAuthorize("hasRole('STUDENT')")
   @GetMapping("/tutors/{id}")
   public String viewTutor(@PathVariable Integer id, Model model) {
+    //Через userService загружает из БД репетитора по id
     User tutor = userService.findById(id)
             .orElseThrow(() -> new RuntimeException("Tutor not found: " + id));
     model.addAttribute("tutor", tutor);
-    return "tutor_view";
+    return "tutor_view"; //Возвращает шаблон tutor_view.html
   }
 
+  // Просмотр персональных данных
   @PreAuthorize("hasAnyRole('STUDENT','TUTOR')")
   @GetMapping("/profile")
   public String profileForm(Model model, Authentication auth) {
     // получаем текущего пользователя
     String email = auth.getName();
+    // читаем email из Authentication
     User user = userService.findByEmail(email).orElseThrow();
+    // собираем DTO с полями для формы
     ProfileDto dto = new ProfileDto();
     dto.setId(user.getId());
     dto.setEmail(user.getEmail());
@@ -71,58 +77,65 @@ public class ViewController {
     dto.setTelegram(user.getPersonalInfo() != null ? user.getPersonalInfo().getTelegram() : null);
 
     model.addAttribute("profile", dto);
-    return "profile";
+    return "profile"; //кладёт его в модель под "profile" и отдаёт форму profile.html
   }
 
+  //Сохранение профиля
   @PreAuthorize("hasAnyRole('STUDENT','TUTOR')")
   @PostMapping("/profile")
   public String updateProfile(@ModelAttribute("profile") ProfileDto dto,
-                              RedirectAttributes redirect) {
-    userService.updateProfile(dto);
+                              RedirectAttributes redirect) { //Принимает заполненный DTO из формы.
+    userService.updateProfile(dto);// сохранить изменения
     redirect.addFlashAttribute("success", "Данные сохранены");
-    return "redirect:/frontend/profile";
+    return "redirect:/frontend/profile"; //flash-сообщение и редиректит обратно на страницу профиля.
   }
 
+  // Список студентов
   @PreAuthorize("hasRole('TUTOR')")
   @GetMapping("/students")
   public String studentsPage(Model model, Authentication auth) {
     // получаем id репетитора из аутентификации
     Integer tutorId = ((UserJwtEntity) auth.getPrincipal()).getId();
     model.addAttribute("students", studentsTutorsService.getStudentsForTutor(tutorId));
-    return "students";
+    return "students"; //кладёт список его студентов в "students" и возвращает students.html
   }
 
+  // Добавить студента
   @PreAuthorize("hasRole('TUTOR')")
   @PostMapping("/students")
   public String addStudent(@RequestParam("studentId") Integer studentId, Authentication auth) {
     Integer tutorId = ((UserJwtEntity) auth.getPrincipal()).getId();
-    studentsTutorsService.addStudentToTutor(tutorId, studentId);
-    return "redirect:/frontend/students";
+    // возвращает ваш класс UserJwtEntity, в котором хранится ID пользователя, email и роли.
+    studentsTutorsService.addStudentToTutor(tutorId, studentId);//в базе создаётся связь «этот репетитор — этот студент
+    return "redirect:/frontend/students"; //привязывает студента к репетитору и делает редирект на список.
   }
 
+  // Просмотр одной задачи
   @GetMapping("/tasks/{id}")
   public String viewTask(@PathVariable Integer id, Model model) {
-    Task task = taskService.getTaskById(id);
-    model.addAttribute("task", task);
+    Task task = taskService.getTaskById(id); //загружает задачу по id
+    model.addAttribute("task", task); //кладёт в модель "task" и рендерит task_view.html
     return "task_view";
   }
 
+  // Форма создания задачи
   @PreAuthorize("hasRole('TUTOR')")
   @GetMapping("/new")
   public String newTaskForm(Model model) {
     model.addAttribute("taskForm", new TaskNRDto());
-    // передаём списки enum'ов
+    // Кладёт пустой DTO и списки enum’ов, чтобы заполнить выпадающие списки в форме task_new.html
     model.addAttribute("classLevels", ClassLevel.values());
     model.addAttribute("subjects", Subject.values());
     return "task_new";
   }
 
+  // Создать задачу
   @PreAuthorize("hasRole('TUTOR')")
   @PostMapping("/new")
   public String createTask(
           @ModelAttribute TaskNRDto taskForm,
           @RequestParam("file") MultipartFile file,
-          Authentication auth
+          Authentication auth //Принимает DTO + файл из формы
   ) throws IOException {
     // Получаем репетитора
     String email = auth.getName();
@@ -135,15 +148,16 @@ public class ViewController {
             taskMapper.toNREntity(taskForm),
             file
     );
-    return "redirect:/frontend/tasks";
+    return "redirect:/frontend/tasks"; //Редиректит на список задач
   }
 
+  // Список задач
   @PreAuthorize("hasRole('TUTOR')")
   @GetMapping("/tasks")
   public String tasksPage(
           @RequestParam(value = "sort", required = false) String sort,
           Model model,
-          Authentication auth
+          Authentication auth //Берёт все задачи репетитора, сортирует по полю, заданному в sort
   ) {
     // 1) Получили email залогиненного пользователя
     String email = auth.getName();
@@ -185,30 +199,33 @@ public class ViewController {
 
     model.addAttribute("groupedTasks", grouped);
     model.addAttribute("sort", sort);
-    model.addAttribute("studentsList", students);
+    model.addAttribute("studentsList", students); //Кладёт в модель groupedTasks, sort и список студентов
 
     return "tasks";
   }
 
+  // Назначить задачу студенту
   @PostMapping("/tasks/assign")
   @PreAuthorize("hasRole('TUTOR')")
   public String assignTask(@RequestParam Integer taskId,
                            @RequestParam Integer studentId,
                            Authentication auth,
                            RedirectAttributes redirect) {
-    Integer tutorId = ((UserJwtEntity) auth.getPrincipal()).getId();
-    studentsTutorsService.assignTaskToStudent(tutorId, taskId, studentId);
+    Integer tutorId = ((UserJwtEntity) auth.getPrincipal()).getId(); //tutorId из auth
+    studentsTutorsService.assignTaskToStudent(tutorId, taskId, studentId);//ривязываетзадачу taskId к студенту studentId
     redirect.addFlashAttribute("assignSuccess", "Задача назначена студенту");
-    return "redirect:/frontend/tasks";
+    //добавляет временное сообщение, которое будет доступно на следующей странице (в model).
+    return "redirect:/frontend/tasks"; //редирект на страницу со списком задач репетитора.
   }
 
+  // Главная страница
   @GetMapping
   public String home(Model model, Authentication auth) {
-    // если залогинен студент
+    //  проверяем, залогинен ли пользователь, и есть ли у него роль STUDENT
     if (auth != null && auth.getAuthorities().stream()
             .anyMatch(a -> a.getAuthority().equals("ROLE_STUDENT"))) {
       Integer studentId = ((UserJwtEntity) auth.getPrincipal()).getId();
-      List<Task> myTasks = studentsTasksRepo
+      List<Task> myTasks = studentsTasksRepo //грузим его список задач через studentsTasksRepo
               .findByStudent_Id(studentId).stream()
               .map(StudentsTasks::getTask)
               .toList();
@@ -217,11 +234,13 @@ public class ViewController {
     return "index";
   }
 
+  // Страница логина
   @GetMapping("/login")
   public String loginPage() {
     return "login";   // src/main/resources/templates/login.html
   }
 
+  // Страница регистрации
   @GetMapping("/register")
   public String registerPage() {
     return "register"; // templates/register.html
