@@ -31,14 +31,15 @@ public class AuthController {
           @RequestBody @Validated JwtRequest req,
           HttpServletResponse response
   ) {
-    JwtResponse jwt = authService.login(req);
+    JwtResponse jwt = authService.login(req); //проверяет учётные данные и выдаёт токены
 
     ResponseCookie cookie = ResponseCookie.from("accessToken", jwt.getAccessToken())
+           //кладём accessToken в HTTPonly cookie accessToken(браузер автоматическиотсылал,JavaScriptкнемунеимелдоступа
             .httpOnly(true)
-            .path("/")
-            .maxAge(props.getAccess() * 3600)
+            .path("/") // cookie действует на всё приложение
+            .maxAge(props.getAccess() * 3600) // время жизни в секундах
             .build();
-    return ResponseEntity.ok()
+    return ResponseEntity.ok() //В теле ответа возвращаем тот же JwtResponse
             .header(HttpHeaders.SET_COOKIE, cookie.toString())
             .body(jwt);
   }
