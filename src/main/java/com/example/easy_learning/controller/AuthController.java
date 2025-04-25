@@ -3,6 +3,7 @@ package com.example.easy_learning.controller;
 import com.example.easy_learning.dto.auth.JwtRequest;
 import com.example.easy_learning.dto.RegisterDto;
 import com.example.easy_learning.dto.auth.JwtResponse;
+import com.example.easy_learning.dto.auth.RefreshRequest;
 import com.example.easy_learning.model.Role;
 import com.example.easy_learning.model.User;
 import com.example.easy_learning.service.AuthService;
@@ -54,5 +55,10 @@ public class AuthController {
       user.getRoles().add(Role.STUDENT);
     }
     return ResponseEntity.ok(userService.create(user));
+  }
+
+  @PostMapping("/refresh")
+  public JwtResponse refresh(@RequestBody RefreshRequest refReq) {
+    return authService.refresh(refReq.getRefreshToken());
   }
 }
