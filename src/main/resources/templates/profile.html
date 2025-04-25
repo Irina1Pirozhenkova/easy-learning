@@ -14,8 +14,16 @@
         <input type="hidden" th:field="*{id}"/>
 
         <div class="col-md-6">
+            <label class="form-label">Ваш уникальный идентификатор</label>
+            <input type="text"
+                   th:field="*{id}"
+                   class="form-control"
+                   readonly/>
+        </div>
+
+        <div class="col-md-6">
             <label class="form-label">Email</label>
-            <input type="email" th:field="*{email}" class="form-control" required/>
+            <input type="email" th:field="*{email}" class="form-control" readonly/>
         </div>
         <div class="col-md-6">
             <label class="form-label">Новый пароль</label>

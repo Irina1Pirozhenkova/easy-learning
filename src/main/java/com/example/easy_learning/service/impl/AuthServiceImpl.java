@@ -39,9 +39,10 @@ public class AuthServiceImpl implements AuthService {
             throw new RuntimeException("Invalid refresh token");
         Authentication auth = jwtProvider.getAuthentication(refreshToken);
         String access = jwtProvider.createAccessToken(auth);
+        String refresh = jwtProvider.createRefreshToken(auth);
         return JwtResponse.builder()
                 .accessToken(access)
-                .refreshToken(refreshToken)
+                .refreshToken(refresh)
                 .build();
     }
 }
