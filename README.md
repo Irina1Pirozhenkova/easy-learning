@@ -17,46 +17,89 @@
 - Определена структура API
 - Создан Git-репозиторий
 #### Схема базы данных
-![image](https://github.com/user-attachments/assets/f176d304-ec39-4e9f-bf58-010d45345806)
+![image](https://github.com/user-attachments/assets/63fd2a9a-376a-45ce-8fae-95afd818ae0f)
+
 #### Описание базы данных
-##### Таблица student — хранит данные об ученике:
-- id: уникальный идентификатор ученика.
-- firstname, lastname: имя и фамилия.
-- birthdate: дата рождения.
-- class: класс.
-- subject: предмет.
-- email, phone, telegram: контакты.
-- password: хеш пароля.
+##### Таблица **users** — общая информация о пользователе (и студенте, и тьюторе)
+- **id**  INTEGER – уникальный идентификатор пользователя  
+- **email**  VARCHAR – электронная почта (логин), уникальное  
+- **password**  VARCHAR – захешированный пароль  
+- **personalInfo.firstname**  VARCHAR – имя  
+- **personalInfo.lastname**  VARCHAR – фамилия  
+- **personalInfo.birthdate**  DATE – дата рождения  
+- **personalInfo.phone**  VARCHAR – номер телефона, уникальное  
+- **personalInfo.telegram**  VARCHAR – ник в Telegram, уникальное  
 
-##### Таблица tutor — информация о репетиторе:
-Аналогична student, но описывает репетитора.
+##### Таблица **user_roles** — роли пользователя  
+- **id**  INTEGER – PK  
+- **user_id**  INTEGER → users.id  
+- **role**  VARCHAR – STUDENT или TUTOR  
 
-##### Таблица homework — домашние задания:
-- id: ID задания.
-- class, subject, topic, difficulty: для какого класса и предмета, тема, уровень сложности.
-- tutor_id: кто создал это ДЗ (внешний ключ на tutor).
+##### Таблица **user_subject_classes** — сочетания «предмет ↔ класс»  
+> (реализовано как `@ElementCollection` в User.personalInfo)  
+- **user_id**  INTEGER → users.id  
+- **subject**  VARCHAR – ENUM из {MATH, PHYSICS, …, ENGLISH}  
+- **class_level**  VARCHAR – ENUM из {CLASS_1…CLASS_11}  
 
-##### Таблица task — отдельные задания внутри ДЗ:
-- id, photo: задание может быть изображением.
-- class, subject, topic, difficulty.
-- tutor_id: автор задания.
+##### Таблица **task** — задания, создаваемые тьюторами  
+- **id**  INTEGER – PK  
+- **photo_url**  VARCHAR – ссылка на картинку с условием задачи  
+- **class**  VARCHAR – ENUM ClassLevel (класс, для которого задача)  
+- **subject**  VARCHAR – ENUM Subject  
+- **topic**  VARCHAR – краткий заголовок/тема задачи  
+- **description**  VARCHAR – подробное описание  
+- **difficulty**  INTEGER – сложность (1–10 и т. п.)  
+- **tutor_id**  INTEGER → users.id  
 
-##### Таблица homework_task — связь между домашками и заданиями:
-Каждое ДЗ (homework_id) может содержать несколько заданий (task_id).
+##### Таблица **students_tasks** — статус выполнения задания учеником  
+- **id**  INTEGER – PK  
+- **student_id**  INTEGER → users.id  
+- **task_id**  INTEGER → task.id  
+- **is_done**  BOOLEAN – пометил ли ученик как «сделал»  
+- **is_checked**  BOOLEAN – проверил ли тьютор  
+- **score**  INTEGER – выставленный балл  
 
-##### Таблица students_homework — кто какое ДЗ получил:
-Связывает student_id и homework_id.
+##### Таблица **students_tutors** — связь «ученик ↔ тьютор»  
+- **id**  INTEGER – PK  
+- **student_id**  INTEGER → users.id (роль STUDENT)  
+- **tutor_id**  INTEGER → users.id (роль TUTOR)  
 
-##### Таблица students_tutors — связь учеников и репетиторов:
-Один репетитор может заниматься с несколькими учениками и наоборот.
+#### Кардинальности и типы связей
+1. **`users` ↔ `user_roles`**  
+   - Тип: **1-к-многим**  
+   - Один пользователь (`users.id`) может иметь несколько записей в `user_roles` (несколько ролей), но каждая запись в `user_roles` принадлежит ровно одному пользователю.
 
-##### Связи:
-- Многие-ко-многим:
-student ↔ tutor через students_tutors.
-student ↔ homework через students_homework.
-homework ↔ task через homework_task.
-- Один-ко-многим:
-tutor → homework, tutor → task.
+2. **`users` ↔ `user_subject_classes`**  
+   - Тип: **1-к-многим**
+   - Один пользователь хранит множество сочетаний «предмет ↔ класс» (`user_subject_classes`), каждое из которых связано с одним `users.id`.
+
+3. **`users` (Tutor) ↔ `task`**  
+   - Тип: **1-к-многим**  
+   - Один тьютор (`users.id` c ролью TUTOR) может создавать много задач (`task.tutor_id`), но у каждой задачи ровно один автор-тьютор.
+
+4. **`task` ↔ `students_tasks`**  
+   - Тип: **1-к-многим**  
+   - Одна задача (`task.id`) может встречаться во многих записях `students_tasks` (разные ученики), но каждая запись `students_tasks` ссылается на одну задачу.
+
+5. **`users` (Student) ↔ `students_tasks`**  
+   - Тип: **1-к-многим**  
+   - Один ученик (`users.id` c ролью STUDENT) может иметь много записей в `students_tasks` (для разных задач), но каждая запись относится к одному ученику.
+
+6. **`students_tasks`**  
+   - Фактически реализует **отношение многие-ко-многим** между **учениками** и **задачами**, обогащённое дополнительными атрибутами (`is_done`, `score` и т. д.).  
+
+7. **`users` (Student) ↔ `students_tutors`**  
+   - Тип: **1-к-многим**  
+   - Один ученик (`users.id` с ролью STUDENT) может быть связан сразу с несколькими репетиторами через `students_tutors.student_id`.
+
+8. **`users` (Tutor) ↔ `students_tutors`**  
+   - Тип: **1-к-многим**  
+   - Один репетитор (`users.id` с ролью TUTOR) может вести много учеников через `students_tutors.tutor_id`.
+
+9. **`students_tutors`**  
+   - Фактически реализует **отношение многие-ко-многим** между **учениками** и **тьюторами**.
+
+
   
 ## Лабораторная работа 1
 - Развернута MySQL в Docker
@@ -67,7 +110,37 @@ tutor → homework, tutor → task.
 
 ##### Разработка ORM-моделей
 - Для взаимодействия с базой данных были разработаны ORM-модели с помощью Hibernate.
-- Определены основные сущности: Homework, Task, Student, Tutor, а также сущности-связки HomeworkTask, StudentsHomework, StudentsTutors.
+- Определены основные сущности:
+1. **User** (`users`)  
+   - PK: `id`  
+   - Поля: `email`, `password`, `personalInfo`,  
+     коллекция `roles` (через `user_roles`), коллекция `subjectClassPairs` (через `user_subject_classes`),  
+     связи на созданные задачи (`tasks`), домашки (`studentsTasks`) и связи ученик–тьютор (`tutors`, `students`).
+
+2. **Role** (`user_roles`)   
+   - PK: `id`  
+   - FK: `user_id` → `users.id`  
+   - Поле: `role` (STUDENT / TUTOR)
+
+3. **SubjectClassPair** (`user_subject_classes`)  
+   - PK (составной): `user_id` + `subject` + `class_level`
+
+4. **Task** (`task`)  
+   - PK: `id`  
+   - FK: `tutor_id` → `users.id`  
+   - Поля: `photo_url`, `class_level`, `subject`, `topic`, `description`, `difficulty`
+
+5. **StudentsTasks** (`students_tasks`)  
+   - PK: `id`  
+   - FK: `student_id` → `users.id`  
+   - FK: `task_id` → `task.id`  
+   - Поля: `is_done`, `is_checked`, `score`
+
+6. **StudentsTutors** (`students_tutors`)  
+   - PK: `id`  
+   - FK: `student_id` → `users.id`  
+   - FK: `tutor_id` → `users.id`  
+
 - Между сущностями настроены связи @OneToMany, @ManyToOne, @ManyToMany, обеспечивающие корректное отображение отношений.
 
 ##### Было реализовано:
@@ -76,9 +149,21 @@ tutor → homework, tutor → task.
 - Для управления структурой базы данных используется Liquibase – инструмент для миграций.
 
 ##### Были разработаны:
-- Контроллеры: HomeworkController, StudentController, TaskController, TutorController
-- Сервисы: HomeworkService, StudentService, TaskService, TutorService
-- JPA-репозитории: HomeworkRepository, StudentRepository, TaskRepository, TutorRepository
+- **Контроллеры**:
+  - `AuthController`  
+  - `ViewController`  
+
+- **Сервисы** (интерфейсы + реализации в `service/impl`):
+  - `AuthService` → `AuthServiceImpl`  
+  - `TaskService` → `TaskServiceImpl`  
+  - `StudentsTutorsService` → `StudentsTutorsServiceImpl`  
+  - `UserService` → `UserServiceImpl`
+
+- **JPA-репозитории**:
+  - `UserRepository`  
+  - `TaskRepository`  
+  - `StudentsTasksRepository`  
+  - `StudentsTutorsRepository`  
 
 ## Лабораторная работа 2
 - Разработаны CRUD-методы для работы с моделями
@@ -87,85 +172,7 @@ tutor → homework, tutor → task.
 
 #### Структура API
 
-#### Homework:
-**POST /api/homeworks** Создание домашнего задания.  
-- Request body: JSON с информацией о задании.  
-- Response: 200 OK (Homework), 400 Bad Request  
 
-**GET /api/homeworks/{id}** Получить домашку по ID (опционально с задачами и студентами).  
-- Query param: ?full=true  
-- Response: 200 OK, 404 Not Found  
-
-**GET /api/homeworks** Получить список всех домашних заданий.  
-- Response: 200 OK  
-
-**PUT /api/homeworks/{id}** Обновить домашнее задание.  
-- Request body: JSON  
-- Response: 200 OK, 400 Bad Request, 404 Not Found  
-
-**DELETE /api/homeworks/{id}** Удалить домашнее задание.  
-- Response: 204 No Content, 404 Not Found  
-
-**POST /api/homeworks/{id}/tasks** Добавить задачи к домашнему заданию.  
-- Request body: список ID задач  
-- Response: 200 OK, 400 Bad Request  
-
-**DELETE /api/homeworks/{id}/tasks** Удалить задачи из домашки.  
-- Request body: список ID задач  
-- Response: 200 OK, 404 Not Found
-
-#### Task:
-**POST /api/tasks** Создание новой задачи без файла.
-- Response: 200 OK (Task), 400 Bad Request (если тело запроса некорректное)
-- Request body:JSON с информацией о задании без файла
-
-**POST /api/tasks/with-file** Создание новой задачи с файлом.
-- Response: 200 OK (Task), 400 Bad Request (если файл или данные некорректные)
-- Request body: JSON с информацией о задании с файлом
-
-**GET /api/tasks/{id}** Получить задачу по ID.
-- Response: 200 OK, 404 Not Found (если не найдено)
-
-**GET /api/tasks** Получить все задачи.
-- Response: 200 OK
-
-**PUT /api/tasks/{id}** Обновить задачу.
-- Response: 200 OK, 404 Not Found
-- Request body: JSON 
-
-**DELETE /api/tasks/{id}** Удалить задачу по ID.
-- Response: 204 No Content, 404 Not Found
-
-**GET /api/tasks/{id}/photo** Получить фото задачи по ID.
-- Response: 200 OK (image/jpeg или image/png), 404 Not Found
-
-#### Student:
-**POST /api/students** Создание нового студента.
-- Response: 200 OK, 400 Bad Request (если данные некорректные)
-- Request body: JSON с информацией о студенте.  
-
-**GET /api/students/{id}** Получить информацию о студенте по ID.
-- Response: 200 OK, 404 Not Found
-
-**GET /api/students** Получить список всех студентов.
-- Response: 200 OK
-
-**PUT /api/students/{id}** Обновить данные студента.
- Response: 200 OK, 404 Not Found (если ID не найден), 400 Bad Request (если данные некорректные)
- Request body:  JSON  
-
-**DELETE /api/students/{id}** Удалить студента по ID.
-- Response: 204 No Content, 404 Not Found
-
-**POST /api/students/{id}/homeworks** Добавить домашки студенту.
-- Response: 200 OK, 400 Bad Request
-- Request body: JSON с информацией о домашках студента.  
-
-**DELETE /api/students/{id}/homeworks** Удалить привязку к домашкам у студента.
-- Response: 200 OK
-
-##### Конкретные примеры запросов и ответов описаны в отчёте, который доступен по ссылке
-https://docs.google.com/document/d/1odeRMj0IMw941y2SPaJtfBGpDKGm13SqU9hXOAfoywI/edit?usp=sharing
 
 ## Лабораторная работа 3
 #### Сделано:
