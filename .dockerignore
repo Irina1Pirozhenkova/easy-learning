@@ -1,0 +1,27 @@
+# Не добавлять папки, которые создаются автоматически
+/build
+/target
+/.gradle
+
+# Файлы IDE
+.idea/
+.vscode/
+*.iml
+
+# Гит-репозиторий и вспомогательные файлы
+.git
+.gitignore
+.gitattributes
+
+# Файлы ОС
+.DS_Store
+Thumbs.db
+
+# Тестовые и временные файлы, логи
+*.log
+
+# Скрипты и настройки, которые не нужны для сборки
+docker-compose.yml
+.env
+HELP.md
+README.md

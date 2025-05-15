@@ -74,7 +74,7 @@
                                     class="form-select form-select-sm me-1"
                                     required>
                                 <option th:each="stu : ${studentsList}"
-                                        th:value="${stu.id}"
+                                        th:value="${stu.id} ${stu.id}"
                                         th:text="${stu.personalInfo.firstname + ' ' + stu.personalInfo.lastname}">
                                 </option>
                             </select>

@@ -1,23 +1,14 @@
+version: "3.8"
 services:
-  app:
-    image: easy_learning_app:0.0.1-SNAPSHOT  # тот же тег, что в build.gradle
-    container_name: easy_learning_app
-    depends_on:
-      mysql:
-        condition: service_healthy
-    env_file:
-      - .env
-    ports:
-      - "8080:8080"
-    volumes:
-      - photo:/app/uploads
-
   mysql:
     image: mysql:8.0
+    container_name: mysql
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: 12345
       MYSQL_DATABASE: easy_learning
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password
     ports:
       - "2020:3306"
     volumes:
@@ -26,7 +17,24 @@ services:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-p12345"]
       interval: 10s
       timeout: 5s
-      retries: 5
+      retries: 10
+
+  app:
+    build: .                     # <--- Стало build, а не image!
+    container_name: easy_learning_app
+    depends_on:
+      mysql:
+        condition: service_healthy
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/easy_learning
+      SPRING_DATASOURCE_USERNAME: user
+      SPRING_DATASOURCE_PASSWORD: password
+      SPRING_DATASOURCE_DRIVER_CLASS_NAME: com.mysql.cj.jdbc.Driver
+      # Добавь другие переменные, если надо
+    ports:
+      - "8080:8080"
+    volumes:
+      - photo:/app/uploads
 
 volumes:
   photo:
