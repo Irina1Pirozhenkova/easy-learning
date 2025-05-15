@@ -171,83 +171,217 @@
 - Для тестирования API использовался Postman (для проверки запросов)
 
 #### Структура API
+#### Students
+#### GET /api/students/{id}
+Получить профиль своего студента (или свои данные).
+Responses:
+200 OK + StudentRDto или StudentNRDto
+401 Unauthorized / 403 Forbidden
 
+#### GET /api/students
+Список всех студентов (только для репетиторов).
+Responses:
+200 OK + [ StudentNRDto, … ]
+401 Unauthorized / 403 Forbidden
+
+#### POST /api/students
+Создать нового студента (только репетитор).
+Responses:
+201 Created + StudentNRDto
+401 Unauthorized / 403 Forbidden
+
+#### PUT /api/students/{id}
+Обновить данные студента (только репетитор).
+Request body: StudentRDto
+Responses:
+200 OK + StudentRDto
+401 Unauthorized / 403 Forbidden
+
+#### DELETE /api/students/{id}
+Удалить студента.
+Responses:
+204 No Content
+
+#### Tutors
+#### GET /api/tutor/{id}
+Получить профиль тьютора (или свои данные).
+Responses:
+200 OK + TutorRDto или TutorNRDto
+401 Unauthorized / 403 Forbidden
+
+#### GET /api/tutor
+Список всех тьюторов (только для репетиторов).
+Responses:
+200 OK + [ TutorNRDto, … ]
+
+#### POST /api/tutor
+Создать нового тьютора.
+Request body: TutorNRDto
+Responses:
+201 Created + TutorNRDto
+
+#### PUT /api/tutor/{id}
+Обновить данные тьютора.
+Request body: TutorRDto
+Responses:
+200 OK + TutorRDto
+
+#### DELETE /api/tutor/{id}
+Удалить тьютора.
+Responses:
+204 No Content
+
+#### GET /api/tutor/students
+Получить список своих студентов.
+Responses:
+200 OK + [ StudentNRDto, … ]
+
+#### POST /api/tutor/students/add?studentId={id}
+Привязать существующего студента.
+Responses:
+200 OK
+
+#### Homeworks & Tasks
+#### GET /api/students/{id}/homeworks
+Список домашних заданий студента (только свой).
+Responses:
+200 OK + [ HomeworkDTO, … ]
+401 Unauthorized / 403 Forbidden
+
+#### POST /api/homeworks
+Создание домашнего задания.
+Request body: HomeworkNRDto
+Responses:
+201 Created + HomeworkNRDto
+
+#### GET /api/homeworks/{id}
+Получить домашнее задание по ID.
+Responses:
+200 OK + HomeworkRDto
+404 Not Found
+
+#### PUT /api/homeworks/{id}
+Обновить домашнее задание.
+Request body: HomeworkRDto
+Responses:
+200 OK
+
+#### DELETE /api/homeworks/{id}
+Удалить домашнее задание.
+Responses:
+204 No Content
 
 
 ## Лабораторная работа 3
 #### Сделано:
 - Регистрация нового пользователя
 - Вход в систему и получение JWT-токена
-- Настройка middleware для защиты API
 - Проверка валидности токена
 - Ограничение доступа к определённым эндпоинтам
 
 #### Проверка работы аутентификации через Postman
 
-##### 1. Регистрация тьютора
-- URL: POST http://localhost:8080/api/v1/auth/register/tutor
-- Body (JSON):{ "email": "tutor1@mail.ru", "password": "12345"}
-- Response (201 Created): { "email": "tutor1@mail.ru",  "password": "$2a$10$...","userType": "tutor"}
-##### 2. Логин тьютора
-- URL: POST http://localhost:8080/api/v1/auth/login
-- Body (JSON):{"username": "tutor1@mail.ru",  "password": "12345"}
-- Response (200 OK):{ "id": 3, "username": "tutor1@mail.ru", "accessToken": "...", "refreshToken": "..."}
-##### 3. Получение одного тьютора
-- URL: GET http://localhost:8080/api/tutor/3
-- Authorization: Bearer {accessToken}
-- Response (200 OK):{"id": 3,"email": "tutor1@mail.ru","tasks": [...], "homeworks": [...]}
-##### 4. Получение всех тьюторов
-- URL: GET http://localhost:8080/api/tutor
-- Authorization: Bearer {accessToken}
-- Response (200 OK) — если авторизован тьютор
-- Response (403 Forbidden) — если студент
-##### 5. Регистрация тьютором студента
-- URL: POST http://localhost:8080/api/students
-- Authorization: Bearer {accessToken} (только тьютор)
-- Body (JSON):{  "email": "student1@mail.ru",  "password": "12345"}
-- Response (201 Created):{  "id": 4,  "email": "student1@mail.ru", "password": null}
-##### 6. Логин студента
-- URL: POST http://localhost:8080/api/v1/auth/login
-- Body (JSON):{  "username": "student1@mail.ru",  "password": "12345"}
-- Response (200 OK):{  "id": 4,  "username": "student1@mail.ru",  "accessToken": "...",  "refreshToken": "..."}
-##### 7. Получение информации о себе (студент)
-- URL: GET http://localhost:8080/api/students/4?full=true
-- Authorization: Bearer {accessToken}
-- Response (200 OK):{ "id": 4,"email": "student1@mail.ru",  "homeworks": [...], "tutors": [...]}
-- Response (403 Forbidden) — если пытается получить чужие данные
-##### 8. Получение всех студентов
-- URL: GET http://localhost:8080/api/students
-- Authorization: Bearer {accessToken} (только тьютор)
-- Response (200 OK) — если тьютор
-- Response (403 Forbidden) — если студент
-##### 9. Обновление студента (изменение пароля)
-- URL: PUT http://localhost:8080/api/students/4
-- Authorization: Bearer {accessToken}
-- Body (JSON):{ "password": "новыйПароль123",  "studentPersonalInfo": { ... }}
-- Response (200 OK) — если обновляет сам себя
-- Response (403 Forbidden) — если другой пользователь
+#### POST /api/v1/auth/login
+Вход в систему и получение JWT.
+Request body (JSON):{ "username": "user@example.com", "password": "secret}
+Responses:
+200 OK + { id, username, accessToken, refreshToken }
+401 Unauthorized при неверных учётных данных
+
+#### POST /api/v1/auth/register/{user-type}
+Регистрация нового пользователя.
+Request body (JSON):{ "email": "newuser@example.com", "password": "password123"}
+Responses:
+200 OK + { email, password, userType }
+400 Bad Request при неверном user-type
+
+#### POST /api/v1/auth/refresh
+Обновление accessToken по refresh-токену.
+Request body: строка с refresh-токеном
+Responses:
+200 OK + { id, username, accessToken, refreshToken }
+400 Bad Request / 401 Unauthorized при невалидном токене
 
 #### Описание модели пользователя и JWT-аутентификации
 
 ##### JWT-система:
 При логине или регистрации выдаются два токена: accessToken и refreshToken.
-accessToken — короткоживущий (30 минут), используется в заголовке Authorization.
-refreshToken — долгоживущий (300 минут), используется для обновления accessToken.
+accessToken — короткоживущий, используется в заголовке Authorization.
+refreshToken — долгоживущий, используется для обновления accessToken.
 
 ##### Принцип работы:
 Пользователь логинится → получает токены.
 accessToken передаётся в каждый запрос, где требуется авторизация.
-Middleware (JwtTokenFilter) извлекает токен и подставляет в SecurityContext.
+JwtTokenFilter извлекает токен и подставляет в SecurityContext.
 Контроллеры через SecurityContextHolder знают, кто сделал запрос.
 
-##### Безопасность:
-Доступ к критичным методам (создание/обновление студентов, получение всех студентов) ограничен по роли (только для тьюторов).
-Студенты могут видеть только свои данные.
-Валидация токенов, кастомные 401 и 403 статусы.
+##### Безопасность: Студенты могут видеть только свои данные.
 
 ##### Модель пользователя:
-Student и Tutor имеют email, password (хранится в виде bcrypt-хэша), личную информацию и связи (задания, репетиторы, домашки).
+Student и Tutor имеют email, password (хранится в виде bcrypt-хэша), личную информацию и связи (задания, репетиторы).
 Для авторизации используются кастомные реализации UserDetails (StudentJwtEntity, TutorJwtEntity).
 
 ## Лабораторная работа 4
-Будет позже
+### Разработка пользовательского интерфейса
+– **Шаблонизатор:** Thymeleaf (Spring)  
+#### **Layout:** `layout.html` описывает общую структуру (header, navbar, footer, подключение JS/CSS) и вставляет в `<main>` фрагменты других страниц через  <main class="container" layout:fragment="content"></main>
+#### Основные страницы (templates/*.html)
+#### Главная (index.html)
+– Для STUDENT: выводит таблицу «Мои задачи» из ${myTasks}
+– Для TUTOR: приветственный баннер
+– Навигация в header с sec:authorize по ролям
+
+#### Логин (login.html)
+- Располагается внутри общего `layout.html` через `layout:fragment="content"`.  
+- Содержит форму
+- После отправки делает POST на /frontend/login, Spring Security проверяет учетные данные.
+- Показывает ссылку на страницу регистрации
+
+#### Регистрация (register.html)
+- Также вставляется в layout.html через layout:fragment="content".
+- Содержит форму
+- POST на /frontend/register, контроллер определяет роль по чекбоксу и создаёт пользователя.
+- Снизу ссылка на страницу логина
+
+#### Личный кабинет (profile.html)
+– Форма редактирования ProfileDto (email, пароль, личная информация)
+– Отображение flash-сообщения об успешном сохранении
+
+#### Мои студенты (students.html)
+– Таблица связей ${students}
+– Форма добавления по ID:
+
+#### Мои репетиторы (tutors.html)
+– Кликинговая таблица ${tutors} с переходом на /frontend/tutors/{id}
+
+#### Список задач (tasks.html)
+– Группировка по классу/предмету из ${groupedTasks}
+– Сортировка через ссылки с sort
+– Кнопка «Назначить» внутри таблицы
+
+#### Просмотр задачи (task_view.html)
+– Вывод полей задачи и изображения ${task.photoUrl}
+
+#### Создание задачи (task_new.html)
+– Форма с th:object="${taskForm}", file-upload и выпадающими списками ${classLevels} и ${subjects}
+
+Все шаблоны подключают общую навигацию через sec:authorize (Spring Security dialect) и используют layout fragments.
+
+#### Настройка взаимодействия с сервером
+- Все страницы построены на серверном рендеринге Thymeleaf и отправляются из `ViewController`.  
+- Формы (`<form>`) отправляют данные на URL-эндпойнты контроллеров через POST/GET.  
+- Данные из контроллеров (`Model.addAttribute`) автоматически подставляются в шаблоны через `${…}`.
+
+#### Работа с аутентификацией
+- Spring Security + JWT: accessToken хранится в HTTP-only cookie, Spring автоматически валидирует токен через `JwtTokenFilter`.  
+- В шаблонах используется атрибут `sec:authorize="hasRole('…')"`, чтобы показывать или скрывать блоки контента в зависимости от роли пользователя.
+
+#### Тестирование интерфейса
+- Ручная проверка в браузере и Postman:  
+  - Логин/регистрация → редиректы на фронтенд-страницы.  
+  - Переход между разделами (мои задачи, профиль, список студентов и т. д.).  
+- Отладка сетевых запросов — Chrome DevTools: проверка отправки форм, наличия заголовков, тела ответа и рендеринга данных на странице.  
+
+## Лабораторная работа 5
+По ссылке доступно описание интерфеса веб-прилодения со скриншотами работы
+https://docs.google.com/document/d/1odeRMj0IMw941y2SPaJtfBGpDKGm13SqU9hXOAfoywI/edit?tab=t.0
