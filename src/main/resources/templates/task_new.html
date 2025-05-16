@@ -22,7 +22,7 @@
                     required>
                 <option th:each="cl : ${classLevels}"
                         th:value="${cl}"
-                        th:text="${cl}">CLASS_10</option>
+                        th:text="${cl.displayName}"></option>
             </select>
         </div>
 
@@ -35,7 +35,7 @@
                     required>
                 <option th:each="sub : ${subjects}"
                         th:value="${sub}"
-                        th:text="${sub}">MATH</option>
+                        th:text="${sub.displayName}"></option>
             </select>
         </div>
 

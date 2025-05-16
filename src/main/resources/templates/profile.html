@@ -24,7 +24,12 @@
         <div class="col-md-6">
             <label class="form-label">Email</label>
             <input type="email" th:field="*{email}" class="form-control" readonly/>
+            <div th:if="${#fields.hasErrors('email')}" class="text-danger">
+                <span th:errors="*{email}"></span>
+            </div>
         </div>
+
+
         <div class="col-md-6">
             <label class="form-label">Новый пароль</label>
             <input type="password" th:field="*{password}" class="form-control"
@@ -46,8 +51,16 @@
 
         <div class="col-md-6">
             <label class="form-label">Телефон</label>
-            <input type="text" th:field="*{phone}" class="form-control"/>
+            <input type="text" th:field="*{phone}" class="form-control"
+                   pattern="\d{11}" title="Введите 11 цифр" maxlength="11" required/>
+            <div th:if="${#fields.hasErrors('phone')}" class="text-danger">
+                <span th:errors="*{phone}"></span>
+            </div>
+
         </div>
+
+
+
         <div class="col-md-6">
             <label class="form-label">Telegram</label>
             <input type="text" th:field="*{telegram}" class="form-control"/>

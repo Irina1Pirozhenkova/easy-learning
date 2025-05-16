@@ -39,16 +39,24 @@ public class StudentsTutorsServiceImpl implements StudentsTutorsService {
   public void addStudentToTutor(Integer tutorId, Integer studentId) {
     User tutor = userRepo.findById(tutorId).orElseThrow(() -> new RuntimeException("Tutor not found"));
     User student = userRepo.findById(studentId).orElseThrow(() -> new RuntimeException("Student not found"));
+
+    // Проверка: уже существует такая связь?
+    boolean exists = linkRepo.existsByTutorAndStudent(tutor, student);
+    if (exists) {
+      throw new IllegalStateException("Студент уже привязан к этому репетитору");
+    }
+
     StudentsTutors link = new StudentsTutors();
     link.setTutor(tutor);
     link.setStudent(student);
     linkRepo.save(link);
   }
 
+
   @Override
   public List<User> getTutorsForStudent(Integer studentId) {
     User student = userRepo.findById(studentId)
-            .orElseThrow(() -> new RuntimeException("Student not found: " + studentId));
+            .orElseThrow(() -> new RuntimeException("Студент не найден: " + studentId));
     return student.getTutors().stream()
             .map(StudentsTutors::getTutor)
             .collect(Collectors.toList());

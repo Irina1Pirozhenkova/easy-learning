@@ -16,6 +16,7 @@ import javax.crypto.SecretKey;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
+import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
@@ -32,14 +33,19 @@ public class JwtTokenProvider {
     public String createAccessToken(Authentication auth) {
         UserJwtEntity user = (UserJwtEntity) auth.getPrincipal();
         Instant now = Instant.now();
+        // Кладём только названия ролей!
+        var roles = user.getAuthorities().stream()
+                .map(a -> a.getAuthority())
+                .collect(Collectors.toList());
+
         return Jwts.builder()
-            .setSubject(user.getUsername())
-            .claim("id", user.getId())
-            .claim("roles", user.getAuthorities())
-            .setIssuedAt(Date.from(now))
-            .setExpiration(Date.from(now.plus(props.getAccess(), ChronoUnit.HOURS)))
-            .signWith(key, SignatureAlgorithm.HS256)
-            .compact();
+                .setSubject(user.getUsername())
+                .claim("id", user.getId())
+                .claim("roles", roles) // <-- теперь список строк, а не объектов
+                .setIssuedAt(Date.from(now))
+                .setExpiration(Date.from(now.plus(props.getAccess(), ChronoUnit.HOURS)))
+                .signWith(key, SignatureAlgorithm.HS256)
+                .compact();
     }
 
     public String createRefreshToken(Authentication auth) {

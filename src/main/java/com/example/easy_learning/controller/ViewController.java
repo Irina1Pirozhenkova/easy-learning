@@ -9,20 +9,21 @@ import com.example.easy_learning.security.UserJwtEntity;
 import com.example.easy_learning.service.StudentsTutorsService;
 import com.example.easy_learning.service.TaskService;
 import com.example.easy_learning.service.UserService;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.ui.Model;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Controller
@@ -81,14 +82,24 @@ public class ViewController {
   }
 
   //Сохранение профиля
-  @PreAuthorize("hasAnyRole('STUDENT','TUTOR')")
   @PostMapping("/profile")
-  public String updateProfile(@ModelAttribute("profile") ProfileDto dto,
-                              RedirectAttributes redirect) { //Принимает заполненный DTO из формы.
-    userService.updateProfile(dto);// сохранить изменения
+  public String updateProfile(
+          @Valid @ModelAttribute("profile") ProfileDto dto,
+          BindingResult bindingResult,
+          RedirectAttributes redirect,
+          Model model,
+          HttpServletResponse response
+  ) {
+    if (bindingResult.hasErrors()) {
+      response.setStatus(HttpServletResponse.SC_BAD_REQUEST); // Устанавливаем статус 400
+      model.addAttribute("profile", dto);
+      return "profile"; // Возвращаем форму с ошибками
+    }
+    userService.updateProfile(dto);
     redirect.addFlashAttribute("success", "Данные сохранены");
-    return "redirect:/frontend/profile"; //flash-сообщение и редиректит обратно на страницу профиля.
+    return "redirect:/frontend/profile";
   }
+
 
   // Список студентов
   @PreAuthorize("hasRole('TUTOR')")
@@ -101,14 +112,30 @@ public class ViewController {
   }
 
   // Добавить студента
-  @PreAuthorize("hasRole('TUTOR')")
   @PostMapping("/students")
-  public String addStudent(@RequestParam("studentId") Integer studentId, Authentication auth) {
+  public String addStudent(
+          @RequestParam("studentId") Integer studentId,
+          Authentication auth,
+          RedirectAttributes redirect,
+          HttpServletResponse response
+  ) {
     Integer tutorId = ((UserJwtEntity) auth.getPrincipal()).getId();
-    // возвращает ваш класс UserJwtEntity, в котором хранится ID пользователя, email и роли.
-    studentsTutorsService.addStudentToTutor(tutorId, studentId);//в базе создаётся связь «этот репетитор — этот студент
-    return "redirect:/frontend/students"; //привязывает студента к репетитору и делает редирект на список.
+    try {
+      studentsTutorsService.addStudentToTutor(tutorId, studentId);
+    } catch (NoSuchElementException e) {
+      response.setStatus(HttpServletResponse.SC_BAD_REQUEST); //400
+      redirect.addFlashAttribute("error", "Студент с ID " + studentId + " не найден");
+    } catch (IllegalStateException e) {
+      response.setStatus(HttpServletResponse.SC_BAD_REQUEST);//400
+      redirect.addFlashAttribute("error", "Студент уже добавлен!");
+    } catch (Exception e) {
+      response.setStatus(HttpServletResponse.SC_BAD_REQUEST);//400
+      redirect.addFlashAttribute("error", "Ошибка: " + e.getMessage());
+    }
+    return "redirect:/frontend/students";
   }
+
+
 
   // Просмотр одной задачи
   @GetMapping("/tasks/{id}")
@@ -122,12 +149,12 @@ public class ViewController {
   @PreAuthorize("hasRole('TUTOR')")
   @GetMapping("/new")
   public String newTaskForm(Model model) {
-    model.addAttribute("taskForm", new TaskNRDto());
-    // Кладёт пустой DTO и списки enum’ов, чтобы заполнить выпадающие списки в форме task_new.html
-    model.addAttribute("classLevels", ClassLevel.values());
-    model.addAttribute("subjects", Subject.values());
-    return "task_new";
+    model.addAttribute("taskForm", new TaskNRDto());              // пустой объект для биндинга формы
+    model.addAttribute("classLevels", ClassLevel.values());       // список всех классов для выпадающего списка
+    model.addAttribute("subjects", Subject.values());             // список всех предметов для выпадающего списка
+    return "task_new";                                            // возвращаем шаблон task_new.html
   }
+
 
   // Создать задачу
   @PreAuthorize("hasRole('TUTOR')")

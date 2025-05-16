@@ -8,7 +8,8 @@
 <body>
 <section layout:fragment="content">
     <h1>Мои студенты</h1>
-
+    <!-- Здесь сообщение об ошибке -->
+    <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
     <table class="table table-bordered">
         <thead class="table-light">
         <tr>
