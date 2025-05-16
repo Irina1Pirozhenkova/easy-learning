@@ -51,22 +51,22 @@
         <tbody>
         <th:block th:each="classEntry : ${groupedTasks}">
             <tr class="table-secondary">
-                <td colspan="5" th:text="'Класс: ' + ${classEntry.key}">Класс: ...</td>
+                <td colspan="5" th:text="'Класс: ' + ${classEntry.key.substring(5)}"></td>
             </tr>
 
             <th:block th:each="subjectEntry : ${classEntry.value}">
                 <tr class="table-active">
-                    <td colspan="5" th:text="'  Предмет: ' + ${subjectEntry.key}">Предмет: ...</td>
+                    <td colspan="5" th:text="'  Предмет: ' + ${subjectEntry.key}"></td>
                 </tr>
 
                 <tr th:each="task : ${subjectEntry.value}"
                     th:onclick="|window.location='@{/frontend/tasks/{id}(id=${task.id})}'|"
                     style="cursor:pointer">
-                    <td th:text="${task.className}">10A</td>
-                    <td th:text="${task.subject}">Math</td>
-                    <td th:text="${task.topic}">Algebra</td>
-                    <td th:text="${task.difficulty}">3</td>
-                    <td th:text="${task.description}">Описание задачи…</td>
+                    <td th:text="${task.className.displayName}"></td>
+                    <td th:text="${task.subject.displayName}"></td>
+                    <td th:text="${task.topic}"></td>
+                    <td th:text="${task.difficulty}"></td>
+                    <td th:text="${task.description}"></td>
                     <td onclick="event.stopPropagation()">
                         <form th:action="@{/frontend/tasks/assign}" method="post" class="d-flex">
                             <input type="hidden" name="taskId" th:value="${task.id}"/>
@@ -74,7 +74,7 @@
                                     class="form-select form-select-sm me-1"
                                     required>
                                 <option th:each="stu : ${studentsList}"
-                                        th:value="${stu.id} ${stu.id}"
+                                        th:value="${stu.id}"
                                         th:text="${stu.personalInfo.firstname + ' ' + stu.personalInfo.lastname}">
                                 </option>
                             </select>

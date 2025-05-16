@@ -15,10 +15,10 @@
 
     <dl class="row">
         <dt class="col-sm-3">Класс</dt>
-        <dd class="col-sm-9" th:text="${task.className}">CLASS_1</dd>
+        <dd class="col-sm-9" th:text="${task.className.displayName}">CLASS_1</dd>
 
         <dt class="col-sm-3">Предмет</dt>
-        <dd class="col-sm-9" th:text="${task.subject}">MATH</dd>
+        <dd class="col-sm-9" th:text="${task.subject.displayName}">MATH</dd>
 
         <dt class="col-sm-3">Тема</dt>
         <dd class="col-sm-9" th:text="${task.topic}">Algebra</dd>

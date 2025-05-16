@@ -3,10 +3,11 @@ package com.example.easy_learning.dto;
 import lombok.Data;
 
 import java.time.LocalDate;
+
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import jakarta.validation.constraints.Email;
-
+import org.springframework.format.annotation.DateTimeFormat;
 
 
 @Data
@@ -19,6 +20,8 @@ public class ProfileDto {
   private String password;
   private String firstname;
   private String lastname;
+
+  @DateTimeFormat(pattern = "yyyy-MM-dd")
   private LocalDate birthdate;
 
   @Pattern(regexp = "\\d{11}", message = "Телефон должен состоять из 11 цифр")

@@ -27,39 +27,51 @@ if (regForm) {
     regForm.addEventListener('submit', async e => {
         //Вешаем submit-обработчик, чтобы перехватить сабмит
         e.preventDefault();
-        const data = {//Собираем поля email, password, флаг tutor
-            email: regForm.email.value,
-            password: regForm.password.value,
-            tutor: regForm.tutor.checked
-        };
-        await postJson('/api/v1/auth/register', data);//создаём пользователя
-        //Сразу же логинимся тем же email/password, получаем обратно { accessToken, refreshToken }
-        const tokens = await postJson('/api/v1/auth/login', {
-            username: data.email,
-            password: data.password
-        });
-        //Сохраняем оба токена в localStorage
-        localStorage.setItem('accessToken', tokens.accessToken);
-        localStorage.setItem('refreshToken', tokens.refreshToken);
-        //Перенаправляем браузер на главную фронтенд-часть /frontend
-        window.location.href = '/frontend';
+        try {
+            const data = {//Собираем поля email, password, флаг tutor
+                email: regForm.email.value,
+                password: regForm.password.value,
+                tutor: regForm.tutor.checked
+            };
+            await postJson('/api/v1/auth/register', data);//создаём пользователя
+            //Сразу же логинимся тем же email/password, получаем обратно { accessToken, refreshToken }
+            const tokens = await postJson('/api/v1/auth/login', {
+                username: data.email,
+                password: data.password
+            });
+            //Сохраняем оба токена в localStorage
+            localStorage.setItem('accessToken', tokens.accessToken);
+            localStorage.setItem('refreshToken', tokens.refreshToken);
+            //Перенаправляем браузер на главную фронтенд-часть /frontend
+            window.location.href = '/frontend';
+        } catch (err) {
+            // err.message содержит JSON-строку с {"message":"..."}
+            const {message} = JSON.parse(err.message);
+            alert(message);                 // самый простой способ
+            // или запишите message во внутристраничный <div class="alert alert-danger">…</div>
+        }
     });
 }
 
 // Логин
 const loginForm = document.getElementById('loginForm');
 if (loginForm) {
-    loginForm.addEventListener('submit', async e => {//Снимаем submit
+    loginForm.addEventListener('submit', async e => {
         e.preventDefault();
-        const payload = {//Собираем username и password
-            username: loginForm.username.value,
-            password: loginForm.password.value
-        };
-        const tokens = await postJson('/api/v1/auth/login', payload);
-        //await postJson('/login', payload) — получаем токены
-        localStorage.setItem('accessToken', tokens.accessToken);//Сохраняем их в localStorage
-        localStorage.setItem('refreshToken', tokens.refreshToken);
-        window.location.href = '/frontend'; ////Перенаправляем браузер на главную фронтенд-часть /frontend
+        try {
+            const tokens = await postJson('/api/v1/auth/login', {
+                username: loginForm.username.value,
+                password: loginForm.password.value
+            });
+            localStorage.setItem('accessToken', tokens.accessToken);
+            localStorage.setItem('refreshToken', tokens.refreshToken);
+            window.location.href = '/frontend';
+        } catch (err) {
+            // err.message содержит JSON-строку с {"message":"..."}
+            const {message} = JSON.parse(err.message);
+            alert(message);                 // самый простой способ
+            // или запишите message во внутристраничный <div class="alert alert-danger">…</div>
+        }
     });
 }
 

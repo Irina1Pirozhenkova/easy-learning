@@ -218,8 +218,8 @@ public class ViewController {
     // 5) Сгруппировали: Map<класс, Map<предмет, List<Task>>>
     Map<String, Map<String, List<Task>>> grouped = tasks.stream()
             .collect(Collectors.groupingBy(
-                    t -> t.getClassName().name(),
-                    Collectors.groupingBy(t -> t.getSubject().name())
+                    t -> t.getClassName().getDisplayName(),
+                    Collectors.groupingBy(t -> t.getSubject().getDisplayName())
             ));
     Integer tutorId = ((UserJwtEntity) auth.getPrincipal()).getId();
     List<User> students = studentsTutorsService.getStudentsForTutor(tutorId);

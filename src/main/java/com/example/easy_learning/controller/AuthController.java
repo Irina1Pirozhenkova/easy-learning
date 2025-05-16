@@ -4,6 +4,7 @@ import com.example.easy_learning.dto.auth.JwtRequest;
 import com.example.easy_learning.dto.RegisterDto;
 import com.example.easy_learning.dto.auth.JwtResponse;
 import com.example.easy_learning.dto.auth.RefreshRequest;
+import com.example.easy_learning.exception.UserExistsException;
 import com.example.easy_learning.model.Role;
 import com.example.easy_learning.model.User;
 import com.example.easy_learning.service.AuthService;
@@ -54,6 +55,10 @@ public class AuthController {
     }
     else {
       user.getRoles().add(Role.STUDENT);
+    }
+
+    if (userService.existsByEmail(user.getEmail())) {
+      throw new UserExistsException("Пользователь с данным email уже существует");
     }
     return ResponseEntity.ok(userService.create(user));
   }
