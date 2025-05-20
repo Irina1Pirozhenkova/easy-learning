@@ -8,28 +8,21 @@
 <body>
 <section layout:fragment="content">
     <h1>Просмотр задачи</h1>
-
     <div class="mb-3">
         <img th:src="@{${task.photoUrl}}" alt="Фото задачи" class="img-fluid"/>
     </div>
-
     <dl class="row">
         <dt class="col-sm-3">Класс</dt>
         <dd class="col-sm-9" th:text="${task.className.displayName}">CLASS_1</dd>
-
         <dt class="col-sm-3">Предмет</dt>
         <dd class="col-sm-9" th:text="${task.subject.displayName}">MATH</dd>
-
         <dt class="col-sm-3">Тема</dt>
         <dd class="col-sm-9" th:text="${task.topic}">Algebra</dd>
-
         <dt class="col-sm-3">Сложность</dt>
         <dd class="col-sm-9" th:text="${task.difficulty}">3</dd>
-
         <dt class="col-sm-3">Описание</dt>
         <dd class="col-sm-9" th:text="${task.description}">Описание задачи</dd>
     </dl>
-
     <a class="btn btn-secondary" th:href="@{/frontend/tasks}">Назад к списку</a>
 </section>
 </body>

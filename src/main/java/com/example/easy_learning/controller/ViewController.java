@@ -30,7 +30,6 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @RequestMapping("/frontend")
 public class ViewController {
-
   private final UserService userService;
   private final TaskService taskService;
   private final TaskMapper taskMapper;

@@ -9,14 +9,10 @@ import lombok.Data;
 @NoArgsConstructor
 @Data
 public class TutorPersonalInfoDto {
-
   private String firstname;
-
   private String lastname;
-
   private LocalDate birthdate;
-
   private String phone;
-
   private String telegram;
 }
+

@@ -18,20 +18,16 @@ import java.io.IOException;
 @Component
 @RequiredArgsConstructor
 public class JwtTokenFilter extends GenericFilterBean {
-
     private final JwtTokenProvider jwtTokenProvider;
-
     @Override
     public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain)
             throws IOException, ServletException {
         HttpServletRequest request = (HttpServletRequest) req;
-
         String token = null;
         String authHeader = request.getHeader("Authorization");
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             token = authHeader.substring(7);
         }
-
         // Если в заголовке нет — ищем в куках
         if (token == null && request.getCookies() != null) {
             for (Cookie c : request.getCookies()) {
@@ -40,7 +36,6 @@ public class JwtTokenFilter extends GenericFilterBean {
                 }
             }
         }
-
         if (token != null && jwtTokenProvider.validate(token)) {
             Authentication auth = jwtTokenProvider.getAuthentication(token);
             SecurityContextHolder.getContext().setAuthentication(auth);

@@ -13,19 +13,14 @@ import org.springframework.format.annotation.DateTimeFormat;
 @Data
 public class ProfileDto {
   private Integer id;
-
   @Email(message = "Некорректный email")
   private String email;
-
   private String password;
   private String firstname;
   private String lastname;
-
   @DateTimeFormat(pattern = "yyyy-MM-dd")
   private LocalDate birthdate;
-
   @Pattern(regexp = "\\d{11}", message = "Телефон должен состоять из 11 цифр")
   private String phone;
-
   private String telegram;
 }

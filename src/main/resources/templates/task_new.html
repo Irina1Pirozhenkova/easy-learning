@@ -12,7 +12,6 @@
           method="post"
           enctype="multipart/form-data"
           th:object="${taskForm}">
-
         <!-- Выпадающий список для ClassLevel -->
         <div class="mb-3">
             <label for="className" class="form-label">Класс</label>
@@ -25,7 +24,6 @@
                         th:text="${cl.displayName}"></option>
             </select>
         </div>
-
         <!-- Выпадающий список для Subject -->
         <div class="mb-3">
             <label for="subject" class="form-label">Предмет</label>

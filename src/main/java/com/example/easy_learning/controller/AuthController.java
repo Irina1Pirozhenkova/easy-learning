@@ -26,14 +26,12 @@ public class AuthController {
   private final AuthService authService;
   private final UserService userService;
   private final JwtProperties props;
-
   @PostMapping("/login")
   public ResponseEntity<JwtResponse> login(
           @RequestBody @Validated JwtRequest req,
           HttpServletResponse response
   ) {
     JwtResponse jwt = authService.login(req); //проверяет учётные данные и выдаёт токены
-
     ResponseCookie cookie = ResponseCookie.from("accessToken", jwt.getAccessToken())
            //кладём accessToken в HTTPonly cookie accessToken(браузер автоматическиотсылал,JavaScriptкнемунеимелдоступа
             .httpOnly(true)
@@ -44,7 +42,6 @@ public class AuthController {
             .header(HttpHeaders.SET_COOKIE, cookie.toString())
             .body(jwt);
   }
-
   @PostMapping("/register")
   public ResponseEntity<User> register(@RequestBody RegisterDto dto) {
     User user = new User();
@@ -62,7 +59,6 @@ public class AuthController {
     }
     return ResponseEntity.ok(userService.create(user));
   }
-
   @PostMapping("/refresh")
   public JwtResponse refresh(@RequestBody RefreshRequest refReq) {
     return authService.refresh(refReq.getRefreshToken());

@@ -4,8 +4,6 @@
       layout:decorate="~{layout}">
 <head>
     <title>Задачи</title>
-
-
 </head>
 <body>
 <div th:if="${assignSuccess}" class="alert alert-success" th:text="${assignSuccess}"></div>
@@ -53,12 +51,10 @@
             <tr class="table-secondary">
                 <td colspan="5" th:text="'Класс: ' + ${classEntry.key.substring(5)}"></td>
             </tr>
-
             <th:block th:each="subjectEntry : ${classEntry.value}">
                 <tr class="table-active">
                     <td colspan="5" th:text="'  Предмет: ' + ${subjectEntry.key}"></td>
                 </tr>
-
                 <tr th:each="task : ${subjectEntry.value}"
                     th:onclick="|window.location='@{/frontend/tasks/{id}(id=${task.id})}'|"
                     style="cursor:pointer">

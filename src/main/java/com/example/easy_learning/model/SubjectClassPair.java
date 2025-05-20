@@ -19,3 +19,4 @@ public class SubjectClassPair {
     @Column(name = "class_level")
     private ClassLevel classLevel;
 }
+

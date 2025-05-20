@@ -24,12 +24,10 @@ public class JwtTokenProvider {
     private final JwtProperties props;
     private SecretKey key;
     private final UserDetailsService userDetailsService;
-
     @PostConstruct
     public void init() {
         key = Keys.hmacShaKeyFor(props.getSecret().getBytes());
     }
-
     public String createAccessToken(Authentication auth) {
         UserJwtEntity user = (UserJwtEntity) auth.getPrincipal();
         Instant now = Instant.now();
@@ -37,7 +35,6 @@ public class JwtTokenProvider {
         var roles = user.getAuthorities().stream()
                 .map(a -> a.getAuthority())
                 .collect(Collectors.toList());
-
         return Jwts.builder()
                 .setSubject(user.getUsername())
                 .claim("id", user.getId())
@@ -47,7 +44,6 @@ public class JwtTokenProvider {
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
     }
-
     public String createRefreshToken(Authentication auth) {
         UserJwtEntity user = (UserJwtEntity) auth.getPrincipal();
         Instant now = Instant.now();
@@ -59,7 +55,6 @@ public class JwtTokenProvider {
             .signWith(key, SignatureAlgorithm.HS256)
             .compact();
     }
-
     public boolean validate(String token) {
         try {
             return Jwts.parserBuilder().setSigningKey(key).build()
@@ -68,7 +63,6 @@ public class JwtTokenProvider {
             return false;
         }
     }
-
     public Authentication getAuthentication(String token) {
         var claims = Jwts.parserBuilder().setSigningKey(key).build()
             .parseClaimsJws(token).getBody();
